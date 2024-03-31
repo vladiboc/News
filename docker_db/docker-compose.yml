@@ -1,0 +1,14 @@
+version: "3"
+services:
+  news-db:
+    image: postgres:12.3
+    container_name: news-db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=news
+    volumes:
+      - ./init.sql/:/docker-entrypoint-initdb.d/
+
