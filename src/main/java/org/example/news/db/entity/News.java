@@ -2,6 +2,7 @@ package org.example.news.db.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.example.news.db.entity.core.Identifiable;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -12,7 +13,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @Entity(name = "news")
-public class News {
+public class News implements Identifiable {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
