@@ -1,0 +1,8 @@
+{
+  "id": 1,
+  "title": "Заголовок №1",
+  "content": "Новость №1 обновлённая",
+  "userId" : 1,
+  "categories": [],
+  "comments": []
+}

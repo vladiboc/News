@@ -31,7 +31,7 @@ public class UserController {
   @GetMapping("/{id}")
   public ResponseEntity<UserResponse> findById(@PathVariable int id) {
     final User foundUser = this.userService.findById(id);
-    final UserResponse response = this.userMapper.userToResponse(foundUser);
+    final UserResponse response = this.userMapper.userToUserResponse(foundUser);
     return ResponseEntity.ok(response);
   }
 
@@ -39,7 +39,7 @@ public class UserController {
   public ResponseEntity<UserResponse> create(@RequestBody @Valid UserUpsertRequest request) {
     final User newUser = this.userMapper.requestToUser(request);
     final User savedUser = this.userService.save(newUser);
-    final UserResponse response = this.userMapper.userToResponse(savedUser);
+    final UserResponse response = this.userMapper.userToUserResponse(savedUser);
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
@@ -47,7 +47,7 @@ public class UserController {
   public ResponseEntity<UserResponse> update(@PathVariable int id, @RequestBody @Valid UserUpsertRequest request) {
     final User editedUser = this.userMapper.requestToUser(request);
     final User updatedUser = this.userService.update(id, editedUser);
-    final UserResponse response = this.userMapper.userToResponse(updatedUser);
+    final UserResponse response = this.userMapper.userToUserResponse(updatedUser);
     return ResponseEntity.ok(response);
   }
 

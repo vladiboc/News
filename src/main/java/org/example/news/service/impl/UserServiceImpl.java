@@ -26,7 +26,8 @@ public class UserServiceImpl implements UserService {
   public User findById(int id) {
     return userRepository.findById(id)
         .orElseThrow(() -> new EntityNotFoundException(
-            MessageFormat.format(ErrorMsg.USER_BY_ID_NOT_FOUND, id))
+            MessageFormat.format(ErrorMsg.USER_BY_ID_NOT_FOUND, id)
+          )
         );
   }
 

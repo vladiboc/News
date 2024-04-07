@@ -6,10 +6,8 @@ import net.javacrumbs.jsonunit.JsonAssert;
 import org.example.news.db.entity.User;
 import org.example.news.mapper.v1.UserMapper;
 import org.example.news.service.UserService;
-import org.example.news.util.ErrorMsg;
 import org.example.news.util.TestStringUtil;
 import org.example.news.web.controller.core.AbstractControllerTest;
-import org.example.news.web.dto.error.ErrorMsgResponse;
 import org.example.news.web.dto.user.UserListResponse;
 import org.example.news.web.dto.user.UserResponse;
 import org.example.news.web.dto.user.UserResponseForList;
@@ -21,15 +19,10 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 class UserControllerTest extends AbstractControllerTest {
@@ -44,11 +37,11 @@ class UserControllerTest extends AbstractControllerTest {
     users.add(new User(1, "Пользователь №1"));
     users.add(new User(2, "Пользователь №2"));
 
-    final List<UserResponseForList> usersForLists = new ArrayList<>();
-    usersForLists.add(new UserResponseForList(1, "Пользователь №1", 0));
-    usersForLists.add(new UserResponseForList(2, "Пользователь №2", 1));
+    final List<UserResponseForList> userResponses = new ArrayList<>();
+    userResponses.add(new UserResponseForList(1, "Пользователь №1", 1, 0));
+    userResponses.add(new UserResponseForList(2, "Пользователь №2", 0,1));
 
-    final UserListResponse userListResponse = new UserListResponse(usersForLists);
+    final UserListResponse userListResponse = new UserListResponse(userResponses);
 
     Mockito.when(this.userService.findAll()).thenReturn(users);
     Mockito.when(this.userMapper.userListToUserListResponse(users)).thenReturn(userListResponse);
@@ -68,13 +61,13 @@ class UserControllerTest extends AbstractControllerTest {
     final UserResponse userResponse = new UserResponse(1, "Пользователь №1");
 
     Mockito.when(this.userService.findById(1)).thenReturn(user);
-    Mockito.when(this.userMapper.userToResponse(user)).thenReturn(userResponse);
+    Mockito.when(this.userMapper.userToUserResponse(user)).thenReturn(userResponse);
 
     final String expectedResponse = TestStringUtil.readStringFromResource("response/user/find_user_by_id_response.json");
     final String actualResponse = this.mockGet("/api/v1/user/1", HttpStatus.OK);
 
     Mockito.verify(this.userService, Mockito.times(1)).findById(1);
-    Mockito.verify(this.userMapper, Mockito.times(1)).userToResponse(user);
+    Mockito.verify(this.userMapper, Mockito.times(1)).userToUserResponse(user);
 
     JsonAssert.assertJsonEquals(expectedResponse, actualResponse);
   }
@@ -82,47 +75,47 @@ class UserControllerTest extends AbstractControllerTest {
   @Test
   void whenCreate_thenReturnNewUser() throws Exception {
     final UserUpsertRequest request = new UserUpsertRequest("Пользователь №1");
-    final User requestedUser = new User("Пользователь №1");
+    final User newUser = new User("Пользователь №1");
     final User createdUser = new User(1, "Пользователь №1");
     final UserResponse response = new UserResponse(1, "Пользователь №1");
 
-    Mockito.when(this.userMapper.requestToUser(request)).thenReturn(requestedUser);
-    Mockito.when(this.userService.save(requestedUser)).thenReturn(createdUser);
-    Mockito.when(this.userMapper.userToResponse(createdUser)).thenReturn(response);
+    Mockito.when(this.userMapper.requestToUser(request)).thenReturn(newUser);
+    Mockito.when(this.userService.save(newUser)).thenReturn(createdUser);
+    Mockito.when(this.userMapper.userToUserResponse(createdUser)).thenReturn(response);
 
     final String expectedResponse = TestStringUtil.readStringFromResource("response/user/create_user_response.json");
     final String actualResponse = this.mockPost("/api/v1/user", request, HttpStatus.CREATED);
 
     Mockito.verify(this.userMapper, Mockito.times(1)).requestToUser(request);
-    Mockito.verify(this.userService, Mockito.times(1)).save(requestedUser);
-    Mockito.verify(this.userMapper, Mockito.times(1)).userToResponse(createdUser);
+    Mockito.verify(this.userService, Mockito.times(1)).save(newUser);
+    Mockito.verify(this.userMapper, Mockito.times(1)).userToUserResponse(createdUser);
 
     JsonAssert.assertJsonEquals(expectedResponse, actualResponse);
   }
 
   @Test
-  void whenUpdateUser_thenReturnUpdatedUser() throws Exception {
+  void whenUpdate_thenReturnUpdatedUser() throws Exception {
     final UserUpsertRequest request = new UserUpsertRequest("Пользователь №1 обновленный");
-    final User editedUser = new User(1, "Пользователь №1 обновленный");
+    final User editedUser = new User("Пользователь №1 обновленный");
     final User updatedUser = new User(1, "Пользователь №1 обновленный");
     final UserResponse response = new UserResponse(1, "Пользователь №1 обновленный");
 
     Mockito.when(this.userMapper.requestToUser(request)).thenReturn(editedUser);
     Mockito.when(this.userService.update(1, editedUser)).thenReturn(updatedUser);
-    Mockito.when(this.userMapper.userToResponse(updatedUser)).thenReturn(response);
+    Mockito.when(this.userMapper.userToUserResponse(updatedUser)).thenReturn(response);
 
     final String expectedResponse = TestStringUtil.readStringFromResource("response/user/update_user_response.json");
     final String actualResponse = this.mockPut("/api/v1/user/1", request, HttpStatus.OK);
 
     Mockito.verify(this.userMapper, Mockito.times(1)).requestToUser(request);
     Mockito.verify(this.userService, Mockito.times(1)).update(1, editedUser);
-    Mockito.verify(this.userMapper, Mockito.times(1)).userToResponse(updatedUser);
+    Mockito.verify(this.userMapper, Mockito.times(1)).userToUserResponse(updatedUser);
 
     JsonAssert.assertJsonEquals(expectedResponse, actualResponse);
   }
 
   @Test
-  void whenDeleteUserById_thenReturnNoContent() throws Exception {
+  void whenDeleteById_thenReturnNoContent() throws Exception {
     this.mockDelete("/api/v1/user/1", HttpStatus.NO_CONTENT);
 
     Mockito.verify(this.userService, Mockito.times(1)).deleteById(1);

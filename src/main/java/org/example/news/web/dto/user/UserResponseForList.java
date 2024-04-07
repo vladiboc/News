@@ -8,6 +8,6 @@ import lombok.*;
 public class UserResponseForList {
     private int id;
     private String name;
-//    private int newsCount;
+    private int newsCount;
     private int commentsCount;
 }

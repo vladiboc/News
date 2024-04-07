@@ -1,49 +1,57 @@
 package org.example.news.mapper.v1;
 
 import lombok.RequiredArgsConstructor;
+import org.example.news.db.entity.Comment;
+import org.example.news.db.entity.News;
 import org.example.news.db.entity.User;
-import org.example.news.web.dto.user.UserResponseForList;
+import org.example.news.web.dto.comment.CommentResponse;
+import org.example.news.web.dto.news.NewsResponseForList;
 import org.example.news.web.dto.user.UserListResponse;
 import org.example.news.web.dto.user.UserResponse;
+import org.example.news.web.dto.user.UserResponseForList;
 import org.example.news.web.dto.user.UserUpsertRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
 public class UserMapper {
+  private final NewsMapper newsMapper;
   private final CommentMapper commentMapper;
 
   public User requestToUser(UserUpsertRequest request) {
-    User newUser = new User(request.getName());
-    return newUser;
+    return new User(request.getName());
   }
 
-  public UserResponse userToResponse(User user) {
-    UserResponse userResponse = new UserResponse();
-    userResponse.setId(user.getId());
-    userResponse.setName(user.getName());
-    userResponse.setComments(commentMapper.commentListToListOfCommentResponse(user.getComments()));
+  public UserResponse userToUserResponse(User user) {
+    UserResponse userResponse = new UserResponse(user.getId(), user.getName());
+
+    List<News> news = user.getNews();
+    List<NewsResponseForList> newsResponses = this.newsMapper.newsListToListOfNewsResponse(news);
+    userResponse.setNews(newsResponses);
+
+    List<Comment> comments = user.getComments();
+    List<CommentResponse> commentResponses = this.commentMapper.commentListToListOfCommentResponse(comments);
+    userResponse.setComments(commentResponses);
+
     return userResponse;
   }
 
   // TODO  получать из сервиса сразу List<UserForList> суммировать в запросе
   public UserListResponse userListToUserListResponse(List<User> users) {
-    UserListResponse response = new UserListResponse();
-    response.setUsers(users.stream()
-        .map(this::userToUserForList)
-        .collect(Collectors.toList())
-    );
-    return response;
+    List<UserResponseForList> userResponses = users.stream()
+        .map(this::userToUserResponseForList)
+        .toList();
+    return new UserListResponse(userResponses);
   }
 
-  private UserResponseForList userToUserForList(User user) {
-    UserResponseForList userForList = new UserResponseForList();
-    userForList.setId(user.getId());
-    userForList.setName(user.getName());
-    userForList.setCommentsCount(user.getComments().size());
-    return userForList;
+  private UserResponseForList userToUserResponseForList(User user) {
+    return new UserResponseForList(
+        user.getId(),
+        user.getName(),
+        user.getNews().size(),
+        user.getComments().size()
+    );
   }
 }

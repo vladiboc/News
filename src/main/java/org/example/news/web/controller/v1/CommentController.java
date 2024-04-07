@@ -31,7 +31,7 @@ public class CommentController {
   @GetMapping("/{id}")
   public ResponseEntity<CommentResponse> findById(@PathVariable int id) {
     final Comment comment = this.commentService.findById(id);
-    final CommentResponse response = this.commentMapper.commentToResponse(comment);
+    final CommentResponse response = this.commentMapper.commentToCommentResponse(comment);
     return ResponseEntity.ok(response);
   }
 
@@ -39,7 +39,7 @@ public class CommentController {
   public ResponseEntity<CommentResponse> create(@RequestBody @Valid CommentUpsertRequest request) {
     final Comment newComment = this.commentMapper.requestToComment(request);
     final Comment createdComment = this.commentService.save(newComment);
-    final CommentResponse response = this.commentMapper.commentToResponse(createdComment);
+    final CommentResponse response = this.commentMapper.commentToCommentResponse(createdComment);
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
@@ -47,7 +47,7 @@ public class CommentController {
   public ResponseEntity<CommentResponse> update(@PathVariable int id, @RequestBody @Valid CommentUpsertRequest request) {
     final Comment editedComment = this.commentMapper.requestToComment(request);
     final Comment updatedComment = this.commentService.update(id, editedComment);
-    final CommentResponse response = this.commentMapper.commentToResponse(updatedComment);
+    final CommentResponse response = this.commentMapper.commentToCommentResponse(updatedComment);
     return ResponseEntity.ok(response);
   }
 

@@ -3,11 +3,13 @@
     {
       "id": 1,
       "name": "Пользователь №1",
+      "newsCount": 1,
       "commentsCount": 0
     },
     {
       "id": 2,
       "name": "Пользователь №2",
+      "newsCount": 0,
       "commentsCount": 1
     }
   ]

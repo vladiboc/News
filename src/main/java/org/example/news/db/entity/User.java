@@ -1,8 +1,9 @@
 package org.example.news.db.entity;
 
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -19,9 +20,9 @@ public class User {
   private int id;
   @Column(name = "user_name")
   private String name;
-//  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-//  @ToString.Exclude
-//  private List<News> news = new ArrayList<>();
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+  @ToString.Exclude
+  private List<News> news = new ArrayList<>();
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
   @ToString.Exclude
   private List<Comment> comments = new ArrayList<>();
@@ -37,13 +38,5 @@ public class User {
   public User(int id, String name) {
     this(name);
     this.id = id;
-  }
-
-  public User(int id, String name, @Nullable Comment comment) {
-    this(id, name);
-    if (comment != null) {
-      comment.setUser(this);
-      this.getComments().add(comment);
-    }
   }
 }

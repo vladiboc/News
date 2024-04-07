@@ -15,10 +15,10 @@ public class Comment {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
   private String content;
-//  @ManyToOne
-//  @JoinColumn(name = "news_id")
-//  @ToString.Exclude
-//  private News news;
+  @ManyToOne
+  @JoinColumn(name = "news_id")
+  @ToString.Exclude
+  private News news;
   @ManyToOne
   @JoinColumn(name = "user_id")
   @ToString.Exclude
@@ -28,12 +28,17 @@ public class Comment {
   @UpdateTimestamp
   private Instant updatedAt;
 
-  public Comment(String content, User user) {
+  public Comment(String content) {
     this.content = content;
+  }
+
+  public Comment(String content, News news, User user) {
+    this(content);
+    this.news = news;
     this.user = user;
   }
-  public Comment(int id, String content, User user) {
-    this(content, user);
+  public Comment(int id, String content, News news, User user) {
+    this(content, news, user);
     this.id = id;
   }
 }

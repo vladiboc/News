@@ -1,0 +1,14 @@
+{
+  "categories": [
+    {
+      "id": 1,
+      "name": "Категория №1",
+      "newsCount": 0
+    },
+    {
+      "id": 2,
+      "name": "Категория №2",
+      "newsCount": 0
+    }
+  ]
+}
