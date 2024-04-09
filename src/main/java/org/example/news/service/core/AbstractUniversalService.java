@@ -10,7 +10,7 @@ import java.text.MessageFormat;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class UniversalServiceImpl<T extends Identifiable> implements UniversalService<T> {
+public abstract class AbstractUniversalService<T extends Identifiable> implements UniversalService<T> {
   private final JpaRepository<T, Integer> repository;
   private final String notFoundByIdMsg;
 
