@@ -22,7 +22,7 @@ import java.util.List;
 public class NewsMapper {
   private final UserService userService;
   private final CategoryService categoryService;
-  private final CommentMapperV0 commentMapper;
+  private final CommentMapper commentMapper;
   private CategoryMapper categoryMapper;
 
   @Autowired

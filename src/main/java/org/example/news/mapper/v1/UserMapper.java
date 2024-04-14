@@ -18,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserMapper {
   private final NewsMapper newsMapper;
-  private final CommentMapperV0 commentMapper;
+  private final CommentMapper commentMapper;
 
   public User requestToUser(UserUpsertRequest request) {
     return new User(request.getName());

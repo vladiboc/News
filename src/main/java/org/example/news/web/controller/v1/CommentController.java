@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.news.db.entity.Comment;
-import org.example.news.mapper.v1.CommentMapperV0;
+import org.example.news.mapper.v1.CommentMapper;
 import org.example.news.service.CommentService;
 import org.example.news.web.dto.comment.CommentListResponse;
 import org.example.news.web.dto.comment.CommentResponse;
@@ -26,7 +26,7 @@ import java.util.List;
 @Tag(name = "Комментарий 1.0", description = "Управление комментариями версия 1.0")
 public class CommentController {
   private final CommentService commentService;
-  private final CommentMapperV0 commentMapper;
+  private final CommentMapper commentMapper;
 
   @Operation(
       summary = "Получить список комментариев",
