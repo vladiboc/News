@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.example.news.db.entity.Category;
 import org.example.news.db.entity.Comment;
 import org.example.news.db.entity.News;
-import org.example.news.db.entity.User;
 import org.example.news.service.CategoryService;
 import org.example.news.service.UserService;
 import org.example.news.web.dto.category.CategoryResponseForList;
@@ -17,14 +16,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
 public class NewsMapper {
   private final UserService userService;
   private final CategoryService categoryService;
-  private final CommentMapper commentMapper;
+  private final CommentMapperV0 commentMapper;
   private CategoryMapper categoryMapper;
 
   @Autowired

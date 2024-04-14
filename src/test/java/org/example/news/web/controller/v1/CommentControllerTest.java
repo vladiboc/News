@@ -6,7 +6,7 @@ import net.javacrumbs.jsonunit.JsonAssert;
 import org.example.news.db.entity.Comment;
 import org.example.news.db.entity.News;
 import org.example.news.db.entity.User;
-import org.example.news.mapper.v1.CommentMapper;
+import org.example.news.mapper.v1.CommentMapperV0;
 import org.example.news.service.CommentService;
 import org.example.news.util.TestStringUtil;
 import org.example.news.web.controller.core.AbstractControllerTest;
@@ -25,7 +25,7 @@ class CommentControllerTest extends AbstractControllerTest {
   @MockBean
   CommentService commentService;
   @MockBean
-  CommentMapper commentMapper;
+  CommentMapperV0 commentMapper;
 
   @Test
   void whenFindAll_thenReturnAllComments() throws Exception {
