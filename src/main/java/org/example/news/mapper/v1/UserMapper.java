@@ -7,7 +7,6 @@ import org.example.news.web.dto.user.UserResponseForList;
 import org.example.news.web.dto.user.UserUpsertRequest;
 import org.mapstruct.DecoratedWith;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
