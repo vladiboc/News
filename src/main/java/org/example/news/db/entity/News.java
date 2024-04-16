@@ -23,7 +23,7 @@ public class News implements Identifiable {
   @JoinColumn(name = "user_id")
   @ToString.Exclude
   private User user;
-  @ManyToMany(cascade = CascadeType.ALL)
+  @ManyToMany
   @JoinTable(name = "news_categories",
       joinColumns = {
           @JoinColumn(name = "news_id")
@@ -32,8 +32,10 @@ public class News implements Identifiable {
           @JoinColumn(name = "category_id")
       }
   )
+  @ToString.Exclude
   private List<Category> categories = new ArrayList<>();
   @OneToMany(mappedBy = "news", cascade = CascadeType.ALL)
+  @ToString.Exclude
   private List<Comment> comments = new ArrayList<>();
   @CreationTimestamp
   @Column(name = "created")

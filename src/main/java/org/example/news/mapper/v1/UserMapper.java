@@ -5,14 +5,12 @@ import org.example.news.web.dto.user.UserListResponse;
 import org.example.news.web.dto.user.UserResponse;
 import org.example.news.web.dto.user.UserResponseForList;
 import org.example.news.web.dto.user.UserUpsertRequest;
-import org.mapstruct.DecoratedWith;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
 
-@DecoratedWith(UserMapperDelegate.class)
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = {CommentMapper.class, NewsMapper.class})
 public interface UserMapper {
   User requestToUser(UserUpsertRequest request);
   UserResponse userToUserResponse(User user);
