@@ -19,13 +19,10 @@ public class Category implements Identifiable {
   private int id;
   private String name;
   @ManyToMany
-  @JoinTable(name = "news_categories",
-      joinColumns = {
-        @JoinColumn(name = "category_id")
-      },
-      inverseJoinColumns = {
-        @JoinColumn(name = "news_id")
-      }
+  @JoinTable(
+      name = "news_categories",
+      joinColumns = {@JoinColumn(name = "category_id")},
+      inverseJoinColumns = {@JoinColumn(name = "news_id")}
   )
   @ToString.Exclude
   private List<News> news = new ArrayList<>();

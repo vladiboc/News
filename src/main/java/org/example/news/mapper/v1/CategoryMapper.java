@@ -11,8 +11,7 @@ import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
 
-@DecoratedWith(CategoryMapperDelegate.class)
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = {NewsMapper.class})
 public interface CategoryMapper {
   Category requestToCategory(CategoryUpsertRequest request);
   CategoryResponse categoryToCategoryResponse(Category category);

@@ -7,14 +7,16 @@ import org.example.news.web.dto.news.NewsResponseForList;
 import org.example.news.web.dto.news.NewsUpsertRequest;
 import org.mapstruct.DecoratedWith;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
 
 @DecoratedWith(NewsMapperDelegate.class)
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = {CategoryMapper.class, CommentMapper.class})
 public interface NewsMapper {
   News requestToNews(NewsUpsertRequest request);
+  @Mapping(source = "news.user.id", target = "userId")
   NewsResponse newsToNewsResponse(News news);
   default NewsResponseForList newsToNewsResponseForList(News news) {
     return new NewsResponseForList(
