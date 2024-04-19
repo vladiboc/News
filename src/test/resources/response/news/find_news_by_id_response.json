@@ -3,6 +3,6 @@
   "title": "Заголовок №1",
   "content": "Новость №1",
   "userId" : 1,
-  "categories": [],
+  "categoryId": 1,
   "comments": []
 }

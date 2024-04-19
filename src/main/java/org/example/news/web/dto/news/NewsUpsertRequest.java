@@ -10,9 +10,6 @@ import lombok.NoArgsConstructor;
 import org.example.news.util.ErrorMsg;
 import org.example.news.util.StringSizes;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -33,12 +30,6 @@ public class NewsUpsertRequest {
   private String content;
   @Positive(message = ErrorMsg.NEWS_USER_ID_MUST_BE_POSITIVE)
   private int userId;
-  @NotNull(message = ErrorMsg.NEWS_CATEGORIES_MUST_BE_FILLED)
-  private List<Integer> categoryIds = new ArrayList<>();
-
-  public NewsUpsertRequest(String title, String content, int userId) {
-    this.title = title;
-    this.content = content;
-    this.userId = userId;
-  }
+  @Positive(message = ErrorMsg.NEWS_CATEGORY_MUST_BE_POSITIVE)
+  private int categoryId;
 }

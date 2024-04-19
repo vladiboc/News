@@ -23,14 +23,10 @@ public class News implements Identifiable {
   @JoinColumn(name = "user_id")
   @ToString.Exclude
   private User user;
-  @ManyToMany
-  @JoinTable(
-      name = "news_categories",
-      joinColumns = {@JoinColumn(name = "news_id")},
-      inverseJoinColumns = {@JoinColumn(name = "category_id")}
-  )
+  @ManyToOne
+  @JoinColumn(name = "category_id")
   @ToString.Exclude
-  private List<Category> categories = new ArrayList<>();
+  private Category category;
   @OneToMany(mappedBy = "news", cascade = CascadeType.ALL)
   @ToString.Exclude
   private List<Comment> comments = new ArrayList<>();
@@ -46,13 +42,14 @@ public class News implements Identifiable {
     this.content = content;
   }
 
-  public News(String title, String content, User user) {
+  public News(String title, String content, User user, Category category) {
     this(title, content);
     this.user = user;
+    this.category = category;
   }
 
-  public News(int id, String title, String content, User user) {
-    this(title, content, user);
+  public News(int id, String title, String content, User user, Category category) {
+    this(title, content, user, category);
     this.id = id;
   }
 }

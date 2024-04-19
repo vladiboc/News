@@ -3,6 +3,7 @@ package org.example.news.web.controller.v1;
 import jakarta.persistence.EntityNotFoundException;
 import net.bytebuddy.utility.RandomString;
 import net.javacrumbs.jsonunit.JsonAssert;
+import org.example.news.db.entity.Category;
 import org.example.news.db.entity.Comment;
 import org.example.news.db.entity.News;
 import org.example.news.db.entity.User;
@@ -32,8 +33,10 @@ class CommentControllerTest extends AbstractControllerTest {
     final List<Comment> comments = new ArrayList<>();
     final User user1 = new User(1, "Пользователь №1");
     final User user2 = new User(2, "Пользователь №2");
-    final News news1 = new News(1, "Заголовок №1", "Новость №1", user1);
-    final News news2 = new News(2, "Заголовок №2", "Новость №2", user1);
+    final Category category1 = new Category(1, "Категория №1");
+    final Category category2 = new Category(2, "Категория №2");
+    final News news1 = new News(1, "Заголовок №1", "Новость №1", user1, category1);
+    final News news2 = new News(2, "Заголовок №2", "Новость №2", user1, category2);
     comments.add(new Comment(1, "Комментарий №1 Пользователя №1", news1, user1));
     comments.add(new Comment(2, "Комментарий №2 Пользователя №1", news2, user1));
     comments.add(new Comment(3, "Комментарий №1 Пользователя №2", news2, user2));
@@ -60,7 +63,8 @@ class CommentControllerTest extends AbstractControllerTest {
   @Test
   void whenFindById_thenReturnCommentById() throws Exception {
     final User user = new User(1, "Пользователь №1");
-    final News news = new News(1, "Заголовок №1", "Новость №1", user);
+    final Category category = new Category(1, "Категория №1");
+    final News news = new News(1, "Заголовок №1", "Новость №1", user, category);
     final Comment comment = new Comment(1, "Комментарий №1 Пользователя №1", news, user);
     final CommentResponse response = new CommentResponse(1, "Комментарий №1 Пользователя №1", 1,1);
 
@@ -80,7 +84,8 @@ class CommentControllerTest extends AbstractControllerTest {
   void whenCreate_thenReturnNewComment() throws Exception {
     final CommentUpsertRequest request = new CommentUpsertRequest("Комментарий №1 Пользователя №1", 1, 1);
     final User user = new User(1, "Пользователь №1");
-    final News news = new News(1, "Заголовок №1", "Новость №1", user);
+    final Category category = new Category(1, "Категория №1");
+    final News news = new News(1, "Заголовок №1", "Новость №1", user, category);
     final Comment requestedComment = new Comment("Комментарий №1 Пользователя №1", news, user);
     final Comment createdComment = new Comment(1, "Комментарий №1 Пользователя №1", news, user);
     final CommentResponse response = new CommentResponse(1, "Комментарий №1 Пользователя №1", 1, 1);
@@ -103,7 +108,8 @@ class CommentControllerTest extends AbstractControllerTest {
   void whenUpdate_thenReturnUpdatedComment() throws Exception {
     final CommentUpsertRequest request = new CommentUpsertRequest("Исправленный Комментарий №1 Пользователя №1", 1, 1);
     final User user = new User(1, "Пользователь №1");
-    final News news = new News(1, "Заголовок №1", "Новость №1", user);
+    final Category category = new Category(1, "Категория №1");
+    final News news = new News(1, "Заголовок №1", "Новость №1", user, category);
     final Comment editedComment = new Comment("Исправленный Комментарий №1 Пользователя №1", news, user);
     final Comment updatedComment = new Comment(1, "Исправленный Комментарий №1 Пользователя №1", news, user);
     final CommentResponse response = new CommentResponse(1, "Исправленный Комментарий №1 Пользователя №1", 1, 1);

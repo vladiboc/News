@@ -15,13 +15,14 @@ public class NewsResponse {
   private String title;
   private String content;
   private int userId;
-  private List<CategoryResponseForList> categories = new ArrayList<>();
+  private int categoryId;
   private List<CommentResponse> comments = new ArrayList<>();
 
-  public NewsResponse(int id, String title, String content, int userId) {
+  public NewsResponse(int id, String title, String content, int userId, int categoryId) {
     this.id = id;
     this.title = title;
     this.content = content;
     this.userId = userId;
+    this.categoryId = categoryId;
   }
 }

@@ -3,13 +3,13 @@ package org.example.news.web.controller.v1;
 import jakarta.persistence.EntityNotFoundException;
 import net.bytebuddy.utility.RandomString;
 import net.javacrumbs.jsonunit.JsonAssert;
+import org.example.news.db.entity.Category;
 import org.example.news.db.entity.News;
 import org.example.news.db.entity.User;
 import org.example.news.mapper.v1.NewsMapper;
 import org.example.news.service.NewsService;
 import org.example.news.util.TestStringUtil;
 import org.example.news.web.controller.core.AbstractControllerTest;
-import org.example.news.web.dto.comment.CommentUpsertRequest;
 import org.example.news.web.dto.news.NewsListResponse;
 import org.example.news.web.dto.news.NewsResponse;
 import org.example.news.web.dto.news.NewsResponseForList;
@@ -33,14 +33,16 @@ class NewsControllerTest extends AbstractControllerTest {
     final List<News> news = new ArrayList<>();
     final User user1 = new User(1, "Пользователь №1");
     final User user2 = new User(2, "Пользователь №2");
-    news.add(new News(1, "Заголовок №1", "Новость №1", user1));
-    news.add(new News(2, "Заголовок №2", "Новость №2", user1));
-    news.add(new News(3, "Заголовок №3", "Новость №3", user2));
+    final Category category1 = new Category(1, "Категория №1");
+    final Category category2 = new Category(2, "Категория №2");
+    news.add(new News(1, "Заголовок №1", "Новость №1", user1, category1));
+    news.add(new News(2, "Заголовок №2", "Новость №2", user1, category2));
+    news.add(new News(3, "Заголовок №3", "Новость №3", user2, category2));
 
     final List<NewsResponseForList> newsResponses = new ArrayList<>();
-    newsResponses.add(new NewsResponseForList(1, "Заголовок №1", "Новость №1", 1, 0, 0));
-    newsResponses.add(new NewsResponseForList(2, "Заголовок №2", "Новость №2", 1, 0, 0));
-    newsResponses.add(new NewsResponseForList(3, "Заголовок №3", "Новость №3", 2, 0, 0));
+    newsResponses.add(new NewsResponseForList(1, "Заголовок №1", "Новость №1", 1, 1, 0));
+    newsResponses.add(new NewsResponseForList(2, "Заголовок №2", "Новость №2", 1, 2, 0));
+    newsResponses.add(new NewsResponseForList(3, "Заголовок №3", "Новость №3", 2, 2, 0));
 
     final NewsListResponse newsListResponse = new NewsListResponse(newsResponses);
 
@@ -59,8 +61,9 @@ class NewsControllerTest extends AbstractControllerTest {
   @Test
   void whenFindById_thenReturnNewsById() throws Exception {
     final User user = new User(1, "Пользователь №1");
-    final News news = new News(1, "Заголовок №1", "Новость №1", user);
-    final NewsResponse newsResponse = new NewsResponse(1, "Заголовок №1", "Новость №1", 1);
+    final Category category = new Category(1, "Категория №1");
+    final News news = new News(1, "Заголовок №1", "Новость №1", user, category);
+    final NewsResponse newsResponse = new NewsResponse(1, "Заголовок №1", "Новость №1", 1, 1);
 
     Mockito.when(this.newsService.findById(1)).thenReturn(news);
     Mockito.when(this.newsMapper.newsToNewsResponse(news)).thenReturn(newsResponse);
@@ -76,11 +79,12 @@ class NewsControllerTest extends AbstractControllerTest {
 
   @Test
   void whenCreate_thenReturnNewNews() throws Exception {
-    final NewsUpsertRequest request = new NewsUpsertRequest("Заголовок №1", "Новость №1", 1);
+    final NewsUpsertRequest request = new NewsUpsertRequest("Заголовок №1", "Новость №1", 1, 1);
     final User user = new User(1, "Пользователь №1");
-    final News newNews = new News("Заголовок №1", "Новость №1", user);
-    final News createdNews = new News(1, "Заголовок №1", "Новость №1", user);
-    final NewsResponse response = new NewsResponse(1, "Заголовок №1", "Новость №1", 1);
+    final Category category = new Category(1, "Категория №1");
+    final News newNews = new News("Заголовок №1", "Новость №1", user, category);
+    final News createdNews = new News(1, "Заголовок №1", "Новость №1", user, category);
+    final NewsResponse response = new NewsResponse(1, "Заголовок №1", "Новость №1", 1, 1);
 
     Mockito.when(this.newsMapper.requestToNews(request)).thenReturn(newNews);
     Mockito.when(this.newsService.save(newNews)).thenReturn(createdNews);
@@ -98,11 +102,12 @@ class NewsControllerTest extends AbstractControllerTest {
 
   @Test
   void whenUpdate_thenReturnUpdatedNews() throws Exception {
-    final NewsUpsertRequest request = new NewsUpsertRequest("Заголовок №1", "Новость №1 обновлённая", 1);
+    final NewsUpsertRequest request = new NewsUpsertRequest("Заголовок №1", "Новость №1 обновлённая", 1, 1);
     final User user = new User(1, "Пользователь №1");
-    final News editedNews = new News("Заголовок №1", "Новость №1 обновлённая", user);
-    final News updatedNews = new News(1, "Заголовок №1", "Новость №1 обновлённая", user);
-    final NewsResponse response = new NewsResponse(1, "Заголовок №1", "Новость №1 обновлённая", 1);
+    final Category category = new Category(1, "Категория №1");
+    final News editedNews = new News("Заголовок №1", "Новость №1 обновлённая", user, category);
+    final News updatedNews = new News(1, "Заголовок №1", "Новость №1 обновлённая", user, category);
+    final NewsResponse response = new NewsResponse(1, "Заголовок №1", "Новость №1 обновлённая", 1, 1);
 
     Mockito.when(this.newsMapper.requestToNews(request)).thenReturn(editedNews);
     Mockito.when(this.newsService.update(1, editedNews)).thenReturn(updatedNews);
@@ -139,7 +144,7 @@ class NewsControllerTest extends AbstractControllerTest {
 
   @Test
   void whenCreateNewsWithEmptyField_thenReturnError() throws Exception {
-    final NewsUpsertRequest request = new NewsUpsertRequest("Заголовок №1","Новость №1",1, new ArrayList<>());
+    final NewsUpsertRequest request = new NewsUpsertRequest("Заголовок №1","Новость №1",1, 1);
 
     request.setTitle(null);
     String expectedResponse = TestStringUtil.readStringFromResource("response/news/_err_news_empty_title_response.json");
@@ -152,18 +157,12 @@ class NewsControllerTest extends AbstractControllerTest {
     actualResponse = this.mockPost("/api/v1/news", request, HttpStatus.BAD_REQUEST);
     JsonAssert.assertJsonEquals(expectedResponse, actualResponse);
 
-    request.setContent("Новость №1");
-    request.setCategoryIds(null);
-    expectedResponse = TestStringUtil.readStringFromResource("response/news/_err_news_null_categories_response.json");
-    actualResponse = this.mockPost("/api/v1/news", request, HttpStatus.BAD_REQUEST);
-    JsonAssert.assertJsonEquals(expectedResponse, actualResponse);
-
   }
 
   @Test
-  void whenCreateWithInvalidUserId_thenReturnError() throws Exception {
-    final NewsUpsertRequest request = new NewsUpsertRequest("Заголовок №1","Новость №1",0, new ArrayList<>());
-    final String expectedResponse = TestStringUtil.readStringFromResource("response/news/_err_invalid_user_id_response.json");
+  void whenCreateWithInvalidIds_thenReturnError() throws Exception {
+    final NewsUpsertRequest request = new NewsUpsertRequest("Заголовок №1","Новость №1",0, 1);
+    String expectedResponse = TestStringUtil.readStringFromResource("response/news/_err_invalid_user_id_response.json");
 
     String actualResponse = this.mockPost("/api/v1/news", request, HttpStatus.BAD_REQUEST);
     JsonAssert.assertJsonEquals(expectedResponse, actualResponse);
@@ -171,11 +170,21 @@ class NewsControllerTest extends AbstractControllerTest {
     request.setUserId(-1);
     actualResponse = this.mockPost("/api/v1/news", request, HttpStatus.BAD_REQUEST);
     JsonAssert.assertJsonEquals(expectedResponse, actualResponse);
+
+    expectedResponse = TestStringUtil.readStringFromResource("response/news/_err_invalid_category_id_response.json");
+    request.setUserId(1);
+    request.setCategoryId(0);
+    actualResponse = this.mockPost("/api/v1/news", request, HttpStatus.BAD_REQUEST);
+    JsonAssert.assertJsonEquals(expectedResponse, actualResponse);
+
+    request.setCategoryId(-1);
+    actualResponse = this.mockPost("/api/v1/news", request, HttpStatus.BAD_REQUEST);
+    JsonAssert.assertJsonEquals(expectedResponse, actualResponse);
   }
 
   @Test
   void whenCreateNewsWithIllegalSizeOfTitleOrContent_thenReturnError() throws Exception {
-    final NewsUpsertRequest request = new NewsUpsertRequest("Заголовок №1","Новость №1",1, new ArrayList<>());
+    final NewsUpsertRequest request = new NewsUpsertRequest("Заголовок №1","Новость №1",1, 1);
     String expectedResponse = TestStringUtil.readStringFromResource("response/news/_err_news_title_illegal_size_response.json");
 
     request.setTitle(RandomString.make(1));

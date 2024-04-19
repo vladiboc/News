@@ -5,7 +5,7 @@
       "title": "Заголовок №1",
       "content": "Новость №1",
       "userId" : 1,
-      "categoriesCount": 0,
+      "categoryId": 1,
       "commentsCount": 0
     },
     {
@@ -13,7 +13,7 @@
       "title": "Заголовок №2",
       "content": "Новость №2",
       "userId" : 1,
-      "categoriesCount": 0,
+      "categoryId": 2,
       "commentsCount": 0
     },
     {
@@ -21,7 +21,7 @@
       "title": "Заголовок №3",
       "content": "Новость №3",
       "userId" : 2,
-      "categoriesCount": 0,
+      "categoryId": 2,
       "commentsCount": 0
     }
   ]

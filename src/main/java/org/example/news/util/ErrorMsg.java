@@ -17,7 +17,7 @@ public class ErrorMsg {
   public static final String CATEGORY_NAME_SIZE_FROM_MIN_TO_MAX = "Название категории должно быть от {min} до {max} символов!";
   public static final String NEWS_BY_ID_NOT_FOUND = "Новость с id {0} не найдена!";
   public static final String NEWS_USER_ID_MUST_BE_POSITIVE = "Идентификатор автора новости должен быть целым числом больше ноля!";
-  public static final String NEWS_CATEGORIES_MUST_BE_FILLED = "Список категорий новости не должен быть null!";
+  public static final String NEWS_CATEGORY_MUST_BE_POSITIVE = "Идентификатор категории новости должен быть целым числом больше ноля!";
   public static final String NEWS_TITLE_SIZE_FROM_MIN_TO_MAX = "Заголовок новости должен быть от {min} до {max} символов!";
   public static final String NEWS_TITLE_MUST_BE_FILLED = "Заголовок новости должен быть не пустым!";
   public static final String NEWS_CONTENT_MUST_BE_FILLED = "Содержание новости должен быть заполнено!";

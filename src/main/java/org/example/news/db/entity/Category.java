@@ -18,12 +18,7 @@ public class Category implements Identifiable {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
   private String name;
-  @ManyToMany
-  @JoinTable(
-      name = "news_categories",
-      joinColumns = {@JoinColumn(name = "category_id")},
-      inverseJoinColumns = {@JoinColumn(name = "news_id")}
-  )
+  @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
   @ToString.Exclude
   private List<News> news = new ArrayList<>();
   @CreationTimestamp

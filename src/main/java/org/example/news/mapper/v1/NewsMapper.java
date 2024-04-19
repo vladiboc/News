@@ -17,6 +17,7 @@ import java.util.List;
 public interface NewsMapper {
   News requestToNews(NewsUpsertRequest request);
   @Mapping(source = "news.user.id", target = "userId")
+  @Mapping(source = "news.category.id", target = "categoryId")
   NewsResponse newsToNewsResponse(News news);
   default NewsResponseForList newsToNewsResponseForList(News news) {
     return new NewsResponseForList(
@@ -24,7 +25,7 @@ public interface NewsMapper {
         news.getTitle(),
         news.getContent(),
         news.getUser().getId(),
-        news.getCategories().size(),
+        news.getCategory().getId(),
         news.getComments().size()
     );
   }

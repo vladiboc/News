@@ -10,6 +10,6 @@ public class NewsResponseForList {
     private String title;
     private String content;
     private int userId;
-    private int categoriesCount;
+    private int categoryId;
     private int commentsCount;
 }
