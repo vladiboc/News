@@ -13,8 +13,8 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public abstract class AbstractUniversalService<T extends Identifiable> implements UniversalService<T> {
-  private final JpaRepository<T, Integer> repository;
-  private final String notFoundByIdMsg;
+  protected final JpaRepository<T, Integer> repository;
+  protected final String notFoundByIdMsg;
 
   @Override
   public List<T> findAll() {
@@ -37,16 +37,10 @@ public abstract class AbstractUniversalService<T extends Identifiable> implement
 
   @Override
   public T update(int id, T object) {
-//TODO выяснить почему приводит к ошибке copyNonNullFields тогда и убрать лишнее из Identifiable
-//    T existedObject = this.findById(id);
-//    BeanUtils.copyNonNullFields(object, existedObject);
-//    existedObject.setId(id);
-//    return this.repository.save(existedObject);
-    T editedObject = object;
     T existedObject = this.findById(id);
-    editedObject.setId(existedObject.getId());
-    editedObject.setCreatedAt(existedObject.getCreatedAt());
-    return this.repository.save(editedObject);
+    BeanUtils.copyNonNullFields(object, existedObject);
+    existedObject.setId(id);
+    return this.repository.save(existedObject);
   }
 
   @Override

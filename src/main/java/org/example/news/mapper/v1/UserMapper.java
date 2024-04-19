@@ -13,7 +13,9 @@ import java.util.List;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = {CommentMapper.class, NewsMapper.class})
 public interface UserMapper {
   User requestToUser(UserUpsertRequest request);
+
   UserResponse userToUserResponse(User user);
+
   default UserResponseForList userToUserResponseForList(User user) {
     return new UserResponseForList(
         user.getId(),
@@ -22,8 +24,9 @@ public interface UserMapper {
         user.getComments().size()
     );
   }
+
   List<UserResponseForList> userListToListOfUserResponseForList(List<User> users);
-  // TODO  получать из сервиса сразу List<UserForList> суммировать в запросе
+
   default UserListResponse userListToUserListResponse(List<User> users) {
     return new UserListResponse(this.userListToListOfUserResponseForList(users));
   }
