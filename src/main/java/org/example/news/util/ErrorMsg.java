@@ -22,4 +22,6 @@ public class ErrorMsg {
   public static final String NEWS_TITLE_MUST_BE_FILLED = "Заголовок новости должен быть не пустым!";
   public static final String NEWS_CONTENT_MUST_BE_FILLED = "Содержание новости должен быть заполнено!";
   public static final String NEWS_CONTENT_SIZE_FROM_MIN_TO_MAX = "Содержание новости должен быть от {min} до {max} символов!";
+  public static final String PAGE_SIZE_MUST_BE_FILLED = "Размен страницы пагинации должен быть задан и неотрицателен!";
+  public static final String PAGE_NUMBER_MUST_BE_FILLED = "Номер страницы пагинации должен быть задан и неотрицателен!";
 }

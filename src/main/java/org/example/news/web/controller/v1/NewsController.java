@@ -11,6 +11,7 @@ import org.example.news.db.entity.News;
 import org.example.news.mapper.v1.NewsMapper;
 import org.example.news.service.NewsService;
 import org.example.news.web.dto.error.ErrorMsgResponse;
+import org.example.news.web.dto.news.NewsFilter;
 import org.example.news.web.dto.news.NewsListResponse;
 import org.example.news.web.dto.news.NewsResponse;
 import org.example.news.web.dto.news.NewsUpsertRequest;
@@ -31,12 +32,10 @@ public class NewsController {
   @Operation(
       summary = "Получить список новостей",
       description = "Возвращает список новостей с номерами, заголовками, содержанием, номерами пользователей и категорий, списками комментариев",
-      tags = {"Список"}
-  )
+      tags = {"Список"})
   @ApiResponse(
       responseCode = "200",
-      content = {@Content(schema = @Schema(implementation = NewsListResponse.class), mediaType = "application/json")}
-  )
+      content = {@Content(schema = @Schema(implementation = NewsListResponse.class), mediaType = "application/json")})
   @GetMapping
   public ResponseEntity<NewsListResponse> findAll() {
     final List<News> news = this.newsService.findAll();
@@ -44,19 +43,23 @@ public class NewsController {
     return ResponseEntity.ok(response);
   }
 
+  @GetMapping("/filter")
+  public ResponseEntity<NewsListResponse> filterBy(@Valid NewsFilter filter) {
+    final List<News> news = this.newsService.findAllByFilter(filter);
+    final NewsListResponse response = this.newsMapper.newsListToNewsListResponse(news);
+    return ResponseEntity.ok(response);
+  }
+
   @Operation(
       summary = "Получить новость по номеру",
       description = "Возвращает номер новости, заголовок, содержание, номера пользователя и категории, списки комментариев",
-      tags = {"Номер"}
-  )
+      tags = {"Номер"})
   @ApiResponse(
       responseCode = "200",
-      content = {@Content(schema = @Schema(implementation = NewsResponse.class), mediaType = "application/json")}
-  )
+      content = {@Content(schema = @Schema(implementation = NewsResponse.class), mediaType = "application/json")})
   @ApiResponse(
       responseCode = "404",
-      content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")}
-  )
+      content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
   @GetMapping("/{id}")
   public ResponseEntity<NewsResponse> findById(@PathVariable int id) {
     final News news = this.newsService.findById(id);
@@ -67,16 +70,13 @@ public class NewsController {
   @Operation(
       summary = "Создать новость",
       description = "Возвращает номер созданной новости, заголовок, содержание, номер пользователя, номер категории, списки комментариев",
-      tags = {"Создание"}
-  )
+      tags = {"Создание"})
   @ApiResponse(
       responseCode = "201",
-      content = {@Content(schema = @Schema(implementation = NewsResponse.class), mediaType = "application/json")}
-  )
+      content = {@Content(schema = @Schema(implementation = NewsResponse.class), mediaType = "application/json")})
   @ApiResponse(
       responseCode = "400",
-      content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")}
-  )
+      content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
   @PostMapping
     public ResponseEntity<NewsResponse> create(@RequestBody @Valid NewsUpsertRequest request) {
     final News newNews = this.newsMapper.requestToNews(request);
@@ -88,16 +88,13 @@ public class NewsController {
   @Operation(
       summary = "Обновить новость",
       description = "Возвращает номер обновленной новости, заголовок, содержание, номер пользователя, номер категории, списки комментариев",
-      tags = {"Номер", "Обновление"}
-  )
+      tags = {"Номер", "Обновление"})
   @ApiResponse(
       responseCode = "200",
-      content = {@Content(schema = @Schema(implementation = NewsResponse.class), mediaType = "application/json")}
-  )
+      content = {@Content(schema = @Schema(implementation = NewsResponse.class), mediaType = "application/json")})
   @ApiResponse(
       responseCode = "400",
-      content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")}
-  )
+      content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
   @PutMapping("/{id}")
   public ResponseEntity<NewsResponse> update(@PathVariable int id, @RequestBody @Valid NewsUpsertRequest request) {
     final News editedNews = this.newsMapper.requestToNews(request);
@@ -109,11 +106,9 @@ public class NewsController {
   @Operation(
       summary = "Удалить новость по номеру",
       description = "Удаляет новость по номеру",
-      tags = {"Номер", "Удаление"}
-  )
+      tags = {"Номер", "Удаление"})
   @ApiResponse(
-      responseCode = "204"
-  )
+      responseCode = "204")
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(@PathVariable int id) {
     this.newsService.deleteById(id);

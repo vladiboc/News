@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.news.db.entity.core.Identifiable;
 import org.example.news.util.BeanUtils;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.text.MessageFormat;
 import java.util.List;
@@ -13,7 +14,9 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public abstract class AbstractUniversalService<T extends Identifiable> implements UniversalService<T> {
-  protected final JpaRepository<T, Integer> repository;
+  public interface UniversalRepository<T> extends JpaRepository<T, Integer>, JpaSpecificationExecutor<T> {}
+
+  protected final UniversalRepository<T> repository;
   protected final String notFoundByIdMsg;
 
   @Override

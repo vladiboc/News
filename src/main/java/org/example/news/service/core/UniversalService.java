@@ -1,5 +1,8 @@
 package org.example.news.service.core;
 
+import org.example.news.db.repository.NewsSpecification;
+import org.hibernate.mapping.Filterable;
+
 import java.util.List;
 
 public interface UniversalService<T> {
