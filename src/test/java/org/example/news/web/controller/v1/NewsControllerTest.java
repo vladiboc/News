@@ -10,10 +10,7 @@ import org.example.news.mapper.v1.NewsMapper;
 import org.example.news.service.NewsService;
 import org.example.news.util.TestStringUtil;
 import org.example.news.web.controller.core.AbstractControllerTest;
-import org.example.news.web.dto.news.NewsListResponse;
-import org.example.news.web.dto.news.NewsResponse;
-import org.example.news.web.dto.news.NewsResponseForList;
-import org.example.news.web.dto.news.NewsUpsertRequest;
+import org.example.news.web.dto.news.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -29,7 +26,7 @@ class NewsControllerTest extends AbstractControllerTest {
   private NewsMapper newsMapper;
 
   @Test
-  void whenFindAll_thenReturnAllNews() throws Exception {
+  void whenFindAllByFilter_thenReturnAllNews() throws Exception {
     final List<News> news = new ArrayList<>();
     final User user1 = new User(1, "Пользователь №1");
     final User user2 = new User(2, "Пользователь №2");
@@ -38,6 +35,7 @@ class NewsControllerTest extends AbstractControllerTest {
     news.add(new News(1, "Заголовок №1", "Новость №1", user1, category1));
     news.add(new News(2, "Заголовок №2", "Новость №2", user1, category2));
     news.add(new News(3, "Заголовок №3", "Новость №3", user2, category2));
+    final NewsFilter filter = new NewsFilter(3, 0);
 
     final List<NewsResponseForList> newsResponses = new ArrayList<>();
     newsResponses.add(new NewsResponseForList(1, "Заголовок №1", "Новость №1", 1, 1, 0));
@@ -46,13 +44,13 @@ class NewsControllerTest extends AbstractControllerTest {
 
     final NewsListResponse newsListResponse = new NewsListResponse(newsResponses);
 
-    Mockito.when(this.newsService.findAll()).thenReturn(news);
+    Mockito.when(this.newsService.findAllByFilter(filter)).thenReturn(news);
     Mockito.when(this.newsMapper.newsListToNewsListResponse(news)).thenReturn(newsListResponse);
 
     final String expectedResponse = TestStringUtil.readStringFromResource("response/news/find_all_news_response.json");
-    final String actualResponse = mockGet("/api/v1/news", HttpStatus.OK);
+    final String actualResponse = mockGet("/api/v1/news?pageSize=3&pageNumber=0", HttpStatus.OK);
 
-    Mockito.verify(this.newsService, Mockito.times(1)).findAll();
+    Mockito.verify(this.newsService, Mockito.times(1)).findAllByFilter(filter);
     Mockito.verify(this.newsMapper, Mockito.times(1)).newsListToNewsListResponse(news);
 
     JsonAssert.assertJsonEquals(expectedResponse, actualResponse);

@@ -13,7 +13,7 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-public abstract class AbstractUniversalService<T extends Identifiable> implements UniversalService<T> {
+public abstract class AbstractUniversalService<T extends Identifiable, F> implements UniversalService<T, F> {
   public interface UniversalRepository<T> extends JpaRepository<T, Integer>, JpaSpecificationExecutor<T> {}
 
   protected final UniversalRepository<T> repository;

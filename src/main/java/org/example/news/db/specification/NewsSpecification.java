@@ -1,4 +1,4 @@
-package org.example.news.db.repository;
+package org.example.news.db.specification;
 
 import jakarta.annotation.Nullable;
 import org.example.news.db.entity.Category;
@@ -8,6 +8,7 @@ import org.example.news.web.dto.news.NewsFilter;
 import org.springframework.data.jpa.domain.Specification;
 
 public interface NewsSpecification {
+
   static Specification<News> withFilter(NewsFilter filter) {
     return Specification.where(NewsSpecification.byUserId(filter.getUserId()))
         .and(NewsSpecification.byUserName(filter.getUserName()))

@@ -1,12 +1,10 @@
 package org.example.news.service.core;
 
-import org.example.news.db.repository.NewsSpecification;
-import org.hibernate.mapping.Filterable;
-
 import java.util.List;
 
-public interface UniversalService<T> {
+public interface UniversalService<T, F> {
   List<T> findAll();
+  List<T> findAllByFilter(F filter);
   T findById(int id);
   T save(T object);
   T update(int id, T object);

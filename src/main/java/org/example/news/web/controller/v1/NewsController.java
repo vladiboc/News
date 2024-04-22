@@ -1,6 +1,8 @@
 package org.example.news.web.controller.v1;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -36,15 +38,30 @@ public class NewsController {
   @ApiResponse(
       responseCode = "200",
       content = {@Content(schema = @Schema(implementation = NewsListResponse.class), mediaType = "application/json")})
-  @GetMapping
+  @GetMapping("/all")
   public ResponseEntity<NewsListResponse> findAll() {
     final List<News> news = this.newsService.findAll();
     final NewsListResponse response = this.newsMapper.newsListToNewsListResponse(news);
     return ResponseEntity.ok(response);
   }
 
-  @GetMapping("/filter")
-  public ResponseEntity<NewsListResponse> filterBy(@Valid NewsFilter filter) {
+  @Operation(
+      summary = "Получить список новостей по заданному фильтру",
+      description = "Возвращает список новостей с номерами, заголовками, содержанием, номерами пользователей и категорий, списками комментариев.<br>" +
+          "Список выдается постранично. Размер страницы и текущий номер обязательно задается в параметрах запроса.<br>" +
+          "Список отфильтрован по значениям, заданным в параметрах запроса. Все параметры необязательны, кроме размера и номера страницы.",
+      tags = {"Список"})
+  @Parameter(name = "pageSize", required = true, description = "Размер страницы получаемых данных")
+  @Parameter(name = "pageNumber", required = true, description = "Номер страницы получаемых данных")
+  @Parameter(name = "userId", description = "Номер пользователя")
+  @Parameter(name = "userName", description = "Имя пользователя")
+  @Parameter(name = "categoryId", description = "Номер категории")
+  @Parameter(name = "categoryName", description = "Имя категории")
+  @ApiResponse(
+      responseCode = "200",
+      content = {@Content(schema = @Schema(implementation = NewsListResponse.class), mediaType = "application/json")})
+  @GetMapping
+  public ResponseEntity<NewsListResponse> findAllByFilter(@Parameter(hidden = true) @Valid NewsFilter filter) {
     final List<News> news = this.newsService.findAllByFilter(filter);
     final NewsListResponse response = this.newsMapper.newsListToNewsListResponse(news);
     return ResponseEntity.ok(response);
