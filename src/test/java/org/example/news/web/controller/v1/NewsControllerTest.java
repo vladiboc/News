@@ -26,7 +26,7 @@ class NewsControllerTest extends AbstractControllerTest {
   private NewsMapper newsMapper;
 
   @Test
-  void whenFindAllByFilter_thenReturnAllNews() throws Exception {
+  void whenFindAllByFilter_thenReturnAllNewsByFilter() throws Exception {
     final List<News> news = new ArrayList<>();
     final User user1 = new User(1, "Пользователь №1");
     final User user2 = new User(2, "Пользователь №2");

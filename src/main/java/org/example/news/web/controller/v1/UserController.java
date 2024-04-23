@@ -1,6 +1,7 @@
 package org.example.news.web.controller.v1;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -11,6 +12,8 @@ import org.example.news.db.entity.User;
 import org.example.news.mapper.v1.UserMapper;
 import org.example.news.service.UserService;
 import org.example.news.web.dto.error.ErrorMsgResponse;
+import org.example.news.web.dto.news.NewsListResponse;
+import org.example.news.web.dto.user.UserFilter;
 import org.example.news.web.dto.user.UserListResponse;
 import org.example.news.web.dto.user.UserResponse;
 import org.example.news.web.dto.user.UserUpsertRequest;
@@ -37,10 +40,27 @@ public class UserController {
       responseCode = "200",
       content = {@Content(schema = @Schema(implementation = UserListResponse.class), mediaType = "application/json")}
   )
-  @GetMapping
+  @GetMapping("/all")
   public ResponseEntity<UserListResponse> findAll() {
     final List<User> allUsers = this.userService.findAll();
     final UserListResponse response = this.userMapper.userListToUserListResponse(allUsers);
+    return ResponseEntity.ok(response);
+  }
+
+  @Operation(
+      summary = "Получить постраничный список пользователей.",
+      description = "Возвращает список пользователей с номерами, именами, количеством созданных новостей и комментариев.<br>" +
+          "Список выдается постранично. Размер страницы и текущий номер должен быть обязательно задан в параметрах запроса.",
+      tags = {"Список"})
+  @Parameter(name = "pageSize", required = true, description = "Размер страницы получаемых данных")
+  @Parameter(name = "pageNumber", required = true, description = "Номер страницы получаемых данных")
+  @ApiResponse(
+      responseCode = "200",
+      content = {@Content(schema = @Schema(implementation = UserListResponse.class), mediaType = "application/json")})
+  @GetMapping
+  public ResponseEntity<UserListResponse> findAllByFilter(@Parameter(hidden = true) @Valid UserFilter filter) {
+    final List<User> users = this.userService.findAllByFilter(filter);
+    final UserListResponse response = this.userMapper.userListToUserListResponse(users);
     return ResponseEntity.ok(response);
   }
 

@@ -21,7 +21,7 @@ public class NewsServiceImpl extends AbstractUniversalService<News, NewsFilter> 
   @Override
   public List<News> findAllByFilter(NewsFilter filter) {
     return super.repository.findAll(NewsSpecification.withFilter(filter),
-        PageRequest.of(filter.getPageNumber(), filter.getPageSize()))
-        .getContent();
+        PageRequest.of(filter.getPageNumber(), filter.getPageSize())
+    ).getContent();
   }
 }

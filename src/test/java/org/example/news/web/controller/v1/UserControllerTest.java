@@ -8,10 +8,7 @@ import org.example.news.mapper.v1.UserMapper;
 import org.example.news.service.UserService;
 import org.example.news.util.TestStringUtil;
 import org.example.news.web.controller.core.AbstractControllerTest;
-import org.example.news.web.dto.user.UserListResponse;
-import org.example.news.web.dto.user.UserResponse;
-import org.example.news.web.dto.user.UserResponseForList;
-import org.example.news.web.dto.user.UserUpsertRequest;
+import org.example.news.web.dto.user.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -32,10 +29,11 @@ class UserControllerTest extends AbstractControllerTest {
   private UserMapper userMapper;
 
   @Test
-  void whenFindAll_thenReturnAllUsers() throws Exception {
+  void whenFindAllByFilter_thenReturnAllUsersByFilter() throws Exception {
     final List<User> users = new ArrayList<>();
     users.add(new User(1, "Пользователь №1"));
     users.add(new User(2, "Пользователь №2"));
+    final UserFilter filter = new UserFilter(3, 0);
 
     final List<UserResponseForList> userResponses = new ArrayList<>();
     userResponses.add(new UserResponseForList(1, "Пользователь №1", 1, 0));
@@ -43,13 +41,13 @@ class UserControllerTest extends AbstractControllerTest {
 
     final UserListResponse userListResponse = new UserListResponse(userResponses);
 
-    Mockito.when(this.userService.findAll()).thenReturn(users);
+    Mockito.when(this.userService.findAllByFilter(filter)).thenReturn(users);
     Mockito.when(this.userMapper.userListToUserListResponse(users)).thenReturn(userListResponse);
 
     final String expectedResponse = TestStringUtil.readStringFromResource("response/user/find_all_users_response.json");
-    final String actualResponse = this.mockGet("/api/v1/user", HttpStatus.OK);
+    final String actualResponse = this.mockGet("/api/v1/user?pageSize=3&pageNumber=0", HttpStatus.OK);
 
-    Mockito.verify(this.userService, Mockito.times(1)).findAll();
+    Mockito.verify(this.userService, Mockito.times(1)).findAllByFilter(filter);
     Mockito.verify(this.userMapper, Mockito.times(1)).userListToUserListResponse(users);
 
     JsonAssert.assertJsonEquals(expectedResponse, actualResponse);
