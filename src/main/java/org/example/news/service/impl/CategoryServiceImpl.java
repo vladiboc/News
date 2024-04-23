@@ -8,6 +8,7 @@ import org.example.news.service.core.AbstractUniversalService;
 import org.example.news.util.ErrorMsg;
 import org.example.news.web.dto.category.CategoryFilter;
 import org.example.news.web.dto.comment.CommentFilter;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +21,8 @@ public class CategoryServiceImpl extends AbstractUniversalService<Category, Cate
 
   @Override
   public List<Category> findAllByFilter(CategoryFilter filter) {
-    return null;
+    return super.repository.findAll(
+        PageRequest.of(filter.getPageNumber(), filter.getPageSize())
+    ).getContent();
   }
 }

@@ -12,7 +12,6 @@ import org.example.news.db.entity.User;
 import org.example.news.mapper.v1.UserMapper;
 import org.example.news.service.UserService;
 import org.example.news.web.dto.error.ErrorMsgResponse;
-import org.example.news.web.dto.news.NewsListResponse;
 import org.example.news.web.dto.user.UserFilter;
 import org.example.news.web.dto.user.UserListResponse;
 import org.example.news.web.dto.user.UserResponse;
@@ -32,8 +31,8 @@ public class UserController {
   private final UserMapper userMapper;
 
   @Operation(
-      summary = "Получить список пользователей",
-      description = "Возвращает список пользователей с номерами, именами, количеством созданных новостей и комментариев",
+      summary = "Получить список пользователей.",
+      description = "Возвращает список пользователей с номерами, именами, количеством созданных новостей и комментариев.",
       tags = {"Список"}
   )
   @ApiResponse(
@@ -65,8 +64,8 @@ public class UserController {
   }
 
   @Operation(
-      summary = "Получить пользователя по номеру",
-      description = "Возвращает номер пользователя, имя пользователя, список созданных новостей, список созданных комментариев",
+      summary = "Получить пользователя по номеру.",
+      description = "Возвращает номер пользователя, имя пользователя, список созданных новостей, список созданных комментариев.",
       tags = {"Номер"}
   )
   @ApiResponse(
@@ -85,8 +84,8 @@ public class UserController {
   }
 
   @Operation(
-      summary = "Создать пользователя",
-      description = "Возвращает номер созданного пользователя, имя пользователя, пустые списки созданных новостей и комментариев",
+      summary = "Создать пользователя.",
+      description = "Возвращает номер созданного пользователя, имя пользователя, пустые списки созданных новостей и комментариев.",
       tags = {"Создание"}
   )
   @ApiResponse(
@@ -106,8 +105,8 @@ public class UserController {
   }
 
   @Operation(
-      summary = "Обновить пользователя с заданным номером",
-      description = "Возвращает номер обновленного пользователя, имя пользователя, списки созданных новостей и комментариев",
+      summary = "Обновить пользователя с заданным номером.",
+      description = "Возвращает номер обновленного пользователя, имя пользователя, списки созданных новостей и комментариев.",
       tags = {"Номер", "Обновление"}
   )
   @ApiResponse(
@@ -127,8 +126,8 @@ public class UserController {
   }
 
   @Operation(
-      summary = "Удалить пользователя по номеру",
-      description = "Удаляет пользователя по номеру",
+      summary = "Удалить пользователя по номеру.",
+      description = "Удаляет пользователя по номеру.",
       tags = {"Номер", "Удаление"}
   )
   @ApiResponse(

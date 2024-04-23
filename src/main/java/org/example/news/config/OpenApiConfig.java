@@ -29,7 +29,7 @@ public class OpenApiConfig {
     Contact contact = new Contact();
     contact.setName("Vladislav Bochkarev");
     contact.setEmail("vladiboc@gmail.com");
-    contact.setUrl("https://https://github.com/vladiboc");
+    contact.setUrl("https://github.com/vladiboc");
 
     License gplLicense = new License().name("GNU GPL v3").url("https://www.gnu.org/licenses/gpl-3.0.ru.html");
 

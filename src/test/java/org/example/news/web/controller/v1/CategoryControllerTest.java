@@ -8,10 +8,7 @@ import org.example.news.mapper.v1.CategoryMapper;
 import org.example.news.service.CategoryService;
 import org.example.news.util.TestStringUtil;
 import org.example.news.web.controller.core.AbstractControllerTest;
-import org.example.news.web.dto.category.CategoryListResponse;
-import org.example.news.web.dto.category.CategoryResponse;
-import org.example.news.web.dto.category.CategoryResponseForList;
-import org.example.news.web.dto.category.CategoryUpsertRequest;
+import org.example.news.web.dto.category.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -27,10 +24,11 @@ class CategoryControllerTest extends AbstractControllerTest {
   private CategoryMapper categoryMapper;
 
   @Test
-  void whenFindAll_thenReturnAllCategories() throws Exception {
+  void whenFindAllByFilter_thenReturnAllCategoriesByFilter() throws Exception {
     final List<Category> categories = new ArrayList<>();
     categories.add(new Category("Категория №1"));
     categories.add(new Category("Категория №2"));
+    final CategoryFilter filter = new CategoryFilter(3, 0);
 
     final List<CategoryResponseForList> categoryResponses = new ArrayList<>();
     categoryResponses.add(new CategoryResponseForList(1, "Категория №1", 0));
@@ -38,13 +36,13 @@ class CategoryControllerTest extends AbstractControllerTest {
 
     final CategoryListResponse response = new CategoryListResponse(categoryResponses);
 
-    Mockito.when(this.categoryService.findAll()).thenReturn(categories);
+    Mockito.when(this.categoryService.findAllByFilter(filter)).thenReturn(categories);
     Mockito.when(this.categoryMapper.categoryListToCategoryListResponse(categories)).thenReturn(response);
 
     final String expectedResponse = TestStringUtil.readStringFromResource("response/category/find_all_categories_response.json");
-    final String actualResponse = this.mockGet("/api/v1/category", HttpStatus.OK);
+    final String actualResponse = this.mockGet("/api/v1/category?pageSize=3&pageNumber=0", HttpStatus.OK);
 
-    Mockito.verify(this.categoryService, Mockito.times(1)).findAll();
+    Mockito.verify(this.categoryService, Mockito.times(1)).findAllByFilter(filter);
     Mockito.verify(this.categoryMapper, Mockito.times(1)).categoryListToCategoryListResponse(categories);
 
     JsonAssert.assertJsonEquals(expectedResponse, actualResponse);

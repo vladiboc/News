@@ -1,6 +1,7 @@
 package org.example.news.web.controller.v1;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.news.db.entity.Category;
 import org.example.news.mapper.v1.CategoryMapper;
 import org.example.news.service.CategoryService;
+import org.example.news.web.dto.category.CategoryFilter;
 import org.example.news.web.dto.category.CategoryListResponse;
 import org.example.news.web.dto.category.CategoryResponse;
 import org.example.news.web.dto.category.CategoryUpsertRequest;
@@ -29,15 +31,13 @@ public class CategoryController {
   private final CategoryMapper categoryMapper;
 
   @Operation(
-      summary = "Получить список категорий",
-      description = "Возвращает список категорий с номерами, названием, списком новостей",
-      tags = {"Список"}
-  )
+      summary = "Получить список категорий.",
+      description = "Возвращает список категорий с номерами, названием, списком новостей.",
+      tags = {"Список"})
   @ApiResponse(
       responseCode = "200",
-      content = {@Content(schema = @Schema(implementation = CategoryListResponse.class), mediaType = "application/json")}
-  )
-  @GetMapping
+      content = {@Content(schema = @Schema(implementation = CategoryListResponse.class), mediaType = "application/json")})
+  @GetMapping("/all")
   public ResponseEntity<CategoryListResponse> findAll() {
     final List<Category> categories = this.categoryService.findAll();
     final CategoryListResponse response = this.categoryMapper.categoryListToCategoryListResponse(categories);
@@ -45,18 +45,32 @@ public class CategoryController {
   }
 
   @Operation(
-      summary = "Получить категорию по номеру",
-      description = "Возвращает номер категории, название, список новостей",
-      tags = {"Номер"}
-  )
+      summary = "Получить постраничный список категорий.",
+      description = "Возвращает список категорий с номерами, названием, списком новостей.<br>" +
+      "Список выдается постранично. Размер страницы и текущий номер должен быть обязательно задан в параметрах запроса.",
+      tags = {"Список"})
+  @Parameter(name = "pageSize", required = true, description = "Размер страницы получаемых данных")
+  @Parameter(name = "pageNumber", required = true, description = "Номер страницы получаемых данных")
   @ApiResponse(
       responseCode = "200",
-      content = {@Content(schema = @Schema(implementation = CategoryResponse.class), mediaType = "application/json")}
-  )
+      content = {@Content(schema = @Schema(implementation = CategoryListResponse.class), mediaType = "application/json")})
+  @GetMapping
+  public ResponseEntity<CategoryListResponse> findAllByFilter(@Parameter(hidden = true) @Valid CategoryFilter filter) {
+    final List<Category> categories = this.categoryService.findAllByFilter(filter);
+    final CategoryListResponse response = this.categoryMapper.categoryListToCategoryListResponse(categories);
+    return ResponseEntity.ok(response);
+  }
+
+  @Operation(
+      summary = "Получить категорию по номеру.",
+      description = "Возвращает номер категории, название, список новостей.",
+      tags = {"Номер"})
+  @ApiResponse(
+      responseCode = "200",
+      content = {@Content(schema = @Schema(implementation = CategoryResponse.class), mediaType = "application/json")})
   @ApiResponse(
       responseCode = "404",
-      content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")}
-  )
+      content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
   @GetMapping("/{id}")
   public ResponseEntity<CategoryResponse> findById(@PathVariable int id) {
     final Category category = this.categoryService.findById(id);
@@ -65,18 +79,15 @@ public class CategoryController {
   }
 
   @Operation(
-      summary = "Создать категорию",
-      description = "Возвращает номер созданной категории, название, номер новости и номер пользователя",
-      tags = {"Создание"}
-  )
+      summary = "Создать категорию.",
+      description = "Возвращает номер созданной категории, название, номер новости и номер пользователя.",
+      tags = {"Создание"})
   @ApiResponse(
       responseCode = "201",
-      content = {@Content(schema = @Schema(implementation = CategoryResponse.class), mediaType = "application/json")}
-  )
+      content = {@Content(schema = @Schema(implementation = CategoryResponse.class), mediaType = "application/json")})
   @ApiResponse(
       responseCode = "400",
-      content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")}
-  )
+      content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
   @PostMapping
   public ResponseEntity<CategoryResponse> create(@RequestBody @Valid CategoryUpsertRequest request) {
     final Category newCategory = this.categoryMapper.requestToCategory(request);
@@ -86,18 +97,15 @@ public class CategoryController {
   }
 
   @Operation(
-      summary = "Обновить категорию",
-      description = "Возвращает номер обновленной категории, название, номер новости и номер пользователя",
-      tags = {"Номер", "Обновление"}
-  )
+      summary = "Обновить категорию.",
+      description = "Возвращает номер обновленной категории, название, номер новости и номер пользователя.",
+      tags = {"Номер", "Обновление"})
   @ApiResponse(
       responseCode = "200",
-      content = {@Content(schema = @Schema(implementation = CategoryResponse.class), mediaType = "application/json")}
-  )
+      content = {@Content(schema = @Schema(implementation = CategoryResponse.class), mediaType = "application/json")})
   @ApiResponse(
       responseCode = "400",
-      content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")}
-  )
+      content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
   @PutMapping("/{id}")
   public ResponseEntity<CategoryResponse> update(@PathVariable int id, @RequestBody @Valid CategoryUpsertRequest request) {
     final Category editedCategory = this.categoryMapper.requestToCategory(request);
@@ -107,13 +115,11 @@ public class CategoryController {
   }
 
   @Operation(
-      summary = "Удалить категорию по номеру",
-      description = "Удаляет категорию по номеру",
-      tags = {"Номер", "Удаление"}
-  )
+      summary = "Удалить категорию по номеру.",
+      description = "Удаляет категорию по номеру.",
+      tags = {"Номер", "Удаление"})
   @ApiResponse(
-      responseCode = "204"
-  )
+      responseCode = "204")
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(@PathVariable int id) {
     this.categoryService.deleteById(id);

@@ -29,14 +29,12 @@ public class CommentController {
   private final CommentMapper commentMapper;
 
   @Operation(
-      summary = "Получить список комментариев",
-      description = "Возвращает список комментариев с номерами, содержимым, номером новости и номером пользователя",
-      tags = {"Список"}
-  )
+      summary = "Получить список комментариев.",
+      description = "Возвращает список комментариев с номерами, содержимым, номером новости и номером пользователя.",
+      tags = {"Список"})
   @ApiResponse(
       responseCode = "200",
-      content = {@Content(schema = @Schema(implementation = CommentListResponse.class), mediaType = "application/json")}
-  )
+      content = {@Content(schema = @Schema(implementation = CommentListResponse.class), mediaType = "application/json")})
   @GetMapping
   public ResponseEntity<CommentListResponse> findAll() {
     final List<Comment> comments = this.commentService.findAll();
@@ -45,18 +43,15 @@ public class CommentController {
   }
 
   @Operation(
-      summary = "Получить комментарий по номеру",
-      description = "Возвращает номер комментария, содержание, номер новости и номер пользователя",
-      tags = {"Номер"}
-  )
+      summary = "Получить комментарий по номеру.",
+      description = "Возвращает номер комментария, содержание, номер новости и номер пользователя.",
+      tags = {"Номер"})
   @ApiResponse(
       responseCode = "200",
-      content = {@Content(schema = @Schema(implementation = CommentResponse.class), mediaType = "application/json")}
-  )
+      content = {@Content(schema = @Schema(implementation = CommentResponse.class), mediaType = "application/json")})
   @ApiResponse(
       responseCode = "404",
-      content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")}
-  )
+      content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
   @GetMapping("/{id}")
   public ResponseEntity<CommentResponse> findById(@PathVariable int id) {
     final Comment comment = this.commentService.findById(id);
@@ -65,18 +60,15 @@ public class CommentController {
   }
 
   @Operation(
-      summary = "Создать комментарий",
-      description = "Возвращает номер созданного комментария, содержание, номер новости и номер пользователя",
-      tags = {"Создание"}
-  )
+      summary = "Создать комментарий.",
+      description = "Возвращает номер созданного комментария, содержание, номер новости и номер пользователя.",
+      tags = {"Создание"})
   @ApiResponse(
       responseCode = "201",
-      content = {@Content(schema = @Schema(implementation = CommentResponse.class), mediaType = "application/json")}
-  )
+      content = {@Content(schema = @Schema(implementation = CommentResponse.class), mediaType = "application/json")})
   @ApiResponse(
       responseCode = "400",
-      content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")}
-  )
+      content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
   @PostMapping
   public ResponseEntity<CommentResponse> create(@RequestBody @Valid CommentUpsertRequest request) {
     final Comment newComment = this.commentMapper.requestToComment(request);
@@ -86,18 +78,15 @@ public class CommentController {
   }
 
   @Operation(
-      summary = "Обновить комментарий",
-      description = "Возвращает номер обновленного комментария, содержание, номер новости и номер пользователя",
-      tags = {"Номер", "Обновление"}
-  )
+      summary = "Обновить комментарий.",
+      description = "Возвращает номер обновленного комментария, содержание, номер новости и номер пользователя.",
+      tags = {"Номер", "Обновление"})
   @ApiResponse(
       responseCode = "200",
-      content = {@Content(schema = @Schema(implementation = CommentResponse.class), mediaType = "application/json")}
-  )
+      content = {@Content(schema = @Schema(implementation = CommentResponse.class), mediaType = "application/json")})
   @ApiResponse(
       responseCode = "400",
-      content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")}
-  )
+      content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
   @PutMapping("/{id}")
   public ResponseEntity<CommentResponse> update(@PathVariable int id, @RequestBody @Valid CommentUpsertRequest request) {
     final Comment editedComment = this.commentMapper.requestToComment(request);
@@ -107,13 +96,11 @@ public class CommentController {
   }
 
   @Operation(
-      summary = "Удалить комментарий по номеру",
-      description = "Удаляет комментарий по номеру",
-      tags = {"Номер", "Удаление"}
-  )
+      summary = "Удалить комментарий по номеру.",
+      description = "Удаляет комментарий по номеру.",
+      tags = {"Номер", "Удаление"})
   @ApiResponse(
-      responseCode = "204"
-  )
+      responseCode = "204")
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(@PathVariable int id) {
     this.commentService.deleteById(id);
