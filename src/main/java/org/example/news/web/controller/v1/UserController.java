@@ -31,22 +31,6 @@ public class UserController {
   private final UserMapper userMapper;
 
   @Operation(
-      summary = "Получить список пользователей.",
-      description = "Возвращает список пользователей с номерами, именами, количеством созданных новостей и комментариев.",
-      tags = {"Список"}
-  )
-  @ApiResponse(
-      responseCode = "200",
-      content = {@Content(schema = @Schema(implementation = UserListResponse.class), mediaType = "application/json")}
-  )
-  @GetMapping("/all")
-  public ResponseEntity<UserListResponse> findAll() {
-    final List<User> allUsers = this.userService.findAll();
-    final UserListResponse response = this.userMapper.userListToUserListResponse(allUsers);
-    return ResponseEntity.ok(response);
-  }
-
-  @Operation(
       summary = "Получить постраничный список пользователей.",
       description = "Возвращает список пользователей с номерами, именами, количеством созданных новостей и комментариев.<br>" +
           "Список выдается постранично. Размер страницы и текущий номер должен быть обязательно задан в параметрах запроса.",
@@ -66,17 +50,14 @@ public class UserController {
   @Operation(
       summary = "Получить пользователя по номеру.",
       description = "Возвращает номер пользователя, имя пользователя, список созданных новостей, список созданных комментариев.",
-      tags = {"Номер"}
-  )
+      tags = {"Номер"})
   @ApiResponse(
       responseCode = "200",
-      content = {@Content(schema = @Schema(implementation = UserResponse.class), mediaType = "application/json")}
-  )
+      content = {@Content(schema = @Schema(implementation = UserResponse.class), mediaType = "application/json")})
   @ApiResponse(
       responseCode = "404",
-      content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")}
-  )
-@GetMapping("/{id}")
+      content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
+  @GetMapping("/{id}")
   public ResponseEntity<UserResponse> findById(@PathVariable int id) {
     final User foundUser = this.userService.findById(id);
     final UserResponse response = this.userMapper.userToUserResponse(foundUser);
@@ -86,16 +67,13 @@ public class UserController {
   @Operation(
       summary = "Создать пользователя.",
       description = "Возвращает номер созданного пользователя, имя пользователя, пустые списки созданных новостей и комментариев.",
-      tags = {"Создание"}
-  )
+      tags = {"Создание"})
   @ApiResponse(
       responseCode = "201",
-      content = {@Content(schema = @Schema(implementation = UserResponse.class), mediaType = "application/json")}
-  )
+      content = {@Content(schema = @Schema(implementation = UserResponse.class), mediaType = "application/json")})
   @ApiResponse(
       responseCode = "400",
-      content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")}
-  )
+      content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
   @PostMapping
   public ResponseEntity<UserResponse> create(@RequestBody @Valid UserUpsertRequest request) {
     final User newUser = this.userMapper.requestToUser(request);
@@ -107,16 +85,13 @@ public class UserController {
   @Operation(
       summary = "Обновить пользователя с заданным номером.",
       description = "Возвращает номер обновленного пользователя, имя пользователя, списки созданных новостей и комментариев.",
-      tags = {"Номер", "Обновление"}
-  )
+      tags = {"Номер", "Обновление"})
   @ApiResponse(
       responseCode = "200",
-      content = {@Content(schema = @Schema(implementation = UserResponse.class), mediaType = "application/json")}
-  )
+      content = {@Content(schema = @Schema(implementation = UserResponse.class), mediaType = "application/json")})
   @ApiResponse(
       responseCode = "400",
-      content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")}
-  )
+      content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
   @PutMapping("/{id}")
   public ResponseEntity<UserResponse> update(@PathVariable int id, @RequestBody @Valid UserUpsertRequest request) {
     final User editedUser = this.userMapper.requestToUser(request);
@@ -128,11 +103,9 @@ public class UserController {
   @Operation(
       summary = "Удалить пользователя по номеру.",
       description = "Удаляет пользователя по номеру.",
-      tags = {"Номер", "Удаление"}
-  )
+      tags = {"Номер", "Удаление"})
   @ApiResponse(
-      responseCode = "204"
-  )
+      responseCode = "204")
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(@PathVariable int id) {
     this.userService.deleteById(id);

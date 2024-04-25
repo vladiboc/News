@@ -11,6 +11,7 @@ import org.example.news.mapper.v1.CommentMapper;
 import org.example.news.service.CommentService;
 import org.example.news.util.TestStringUtil;
 import org.example.news.web.controller.core.AbstractControllerTest;
+import org.example.news.web.dto.comment.CommentFilter;
 import org.example.news.web.dto.comment.CommentListResponse;
 import org.example.news.web.dto.comment.CommentResponse;
 import org.example.news.web.dto.comment.CommentUpsertRequest;
@@ -29,32 +30,31 @@ class CommentControllerTest extends AbstractControllerTest {
   CommentMapper commentMapper;
 
   @Test
-  void whenFindAll_thenReturnAllComments() throws Exception {
-    final List<Comment> comments = new ArrayList<>();
+  void whenFindAllByFilter_thenReturnAllCommentsByFilter() throws Exception {
     final User user1 = new User(1, "Пользователь №1");
     final User user2 = new User(2, "Пользователь №2");
     final Category category1 = new Category(1, "Категория №1");
     final Category category2 = new Category(2, "Категория №2");
     final News news1 = new News(1, "Заголовок №1", "Новость №1", user1, category1);
     final News news2 = new News(2, "Заголовок №2", "Новость №2", user1, category2);
+    final List<Comment> comments = new ArrayList<>();
     comments.add(new Comment(1, "Комментарий №1 Пользователя №1", news1, user1));
     comments.add(new Comment(2, "Комментарий №2 Пользователя №1", news2, user1));
-    comments.add(new Comment(3, "Комментарий №1 Пользователя №2", news2, user2));
+    final CommentFilter filter = new CommentFilter(1);
 
     final List<CommentResponse> commentResponses = new ArrayList<>();
     commentResponses.add(new CommentResponse(1, "Комментарий №1 Пользователя №1", 1, 1));
     commentResponses.add(new CommentResponse(2, "Комментарий №2 Пользователя №1", 2, 1));
-    commentResponses.add(new CommentResponse(3, "Комментарий №1 Пользователя №2", 2, 2));
 
     final CommentListResponse commentListResponse = new CommentListResponse(commentResponses);
 
-    Mockito.when(this.commentService.findAll()).thenReturn(comments);
+    Mockito.when(this.commentService.findAllByFilter(filter)).thenReturn(comments);
     Mockito.when((this.commentMapper.commentListToCommentListResponse(comments))).thenReturn(commentListResponse);
 
     final String expectedResponse = TestStringUtil.readStringFromResource("response/comment/find_all_comments_response.json");
-    final String actualResponse = this.mockGet("/api/v1/comment", HttpStatus.OK);
+    final String actualResponse = this.mockGet("/api/v1/comment?userId=1", HttpStatus.OK);
 
-    Mockito.verify(this.commentService, Mockito.times(1)).findAll();
+    Mockito.verify(this.commentService, Mockito.times(1)).findAllByFilter(filter);
     Mockito.verify(this.commentMapper, Mockito.times(1)).commentListToCommentListResponse(comments);
 
     JsonAssert.assertJsonEquals(expectedResponse, actualResponse);

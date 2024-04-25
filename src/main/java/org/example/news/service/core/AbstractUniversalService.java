@@ -20,11 +20,6 @@ public abstract class AbstractUniversalService<T extends Identifiable, F> implem
   protected final String notFoundByIdMsg;
 
   @Override
-  public List<T> findAll() {
-    return this.repository.findAll();
-  }
-
-  @Override
   public T findById(int id) {
     return this.repository.findById(id)
         .orElseThrow(() -> new EntityNotFoundException(

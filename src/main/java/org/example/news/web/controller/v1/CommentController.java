@@ -1,6 +1,7 @@
 package org.example.news.web.controller.v1;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -10,10 +11,12 @@ import lombok.RequiredArgsConstructor;
 import org.example.news.db.entity.Comment;
 import org.example.news.mapper.v1.CommentMapper;
 import org.example.news.service.CommentService;
+import org.example.news.web.dto.comment.CommentFilter;
 import org.example.news.web.dto.comment.CommentListResponse;
 import org.example.news.web.dto.comment.CommentResponse;
 import org.example.news.web.dto.comment.CommentUpsertRequest;
 import org.example.news.web.dto.error.ErrorMsgResponse;
+import org.example.news.web.dto.user.UserListResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,15 +32,16 @@ public class CommentController {
   private final CommentMapper commentMapper;
 
   @Operation(
-      summary = "Получить список комментариев.",
+      summary = "Получить список всех комментариев заданного пользователя.",
       description = "Возвращает список комментариев с номерами, содержимым, номером новости и номером пользователя.",
       tags = {"Список"})
+  @Parameter(name = "userId", required = true, description = "Идентификатор пользователя")
   @ApiResponse(
       responseCode = "200",
       content = {@Content(schema = @Schema(implementation = CommentListResponse.class), mediaType = "application/json")})
   @GetMapping
-  public ResponseEntity<CommentListResponse> findAll() {
-    final List<Comment> comments = this.commentService.findAll();
+  public ResponseEntity<CommentListResponse> findAllByFilter(@Parameter(hidden = true) @Valid CommentFilter filter) {
+    final List<Comment> comments = this.commentService.findAllByFilter(filter);
     final CommentListResponse response = this.commentMapper.commentListToCommentListResponse(comments);
     return ResponseEntity.ok(response);
   }

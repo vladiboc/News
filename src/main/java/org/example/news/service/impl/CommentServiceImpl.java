@@ -3,6 +3,7 @@ package org.example.news.service.impl;
 import org.example.news.db.entity.Comment;
 import org.example.news.db.entity.User;
 import org.example.news.db.repository.CommentRepository;
+import org.example.news.db.specification.CommentSpecification;
 import org.example.news.service.CommentService;
 import org.example.news.service.core.AbstractUniversalService;
 import org.example.news.util.ErrorMsg;
@@ -20,6 +21,6 @@ public class CommentServiceImpl extends AbstractUniversalService<Comment, Commen
 
   @Override
   public List<Comment> findAllByFilter(CommentFilter filter) {
-    return null;
+    return super.repository.findAll(CommentSpecification.withFilter(filter));
   }
 }

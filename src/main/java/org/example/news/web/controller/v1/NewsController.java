@@ -31,20 +31,6 @@ public class NewsController {
   private final NewsMapper newsMapper;
 
   @Operation(
-      summary = "Получить список новостей",
-      description = "Возвращает список новостей с номерами, заголовками, содержанием, номерами пользователей и категорий, списками комментариев",
-      tags = {"Список"})
-  @ApiResponse(
-      responseCode = "200",
-      content = {@Content(schema = @Schema(implementation = NewsListResponse.class), mediaType = "application/json")})
-  @GetMapping("/all")
-  public ResponseEntity<NewsListResponse> findAll() {
-    final List<News> news = this.newsService.findAll();
-    final NewsListResponse response = this.newsMapper.newsListToNewsListResponse(news);
-    return ResponseEntity.ok(response);
-  }
-
-  @Operation(
       summary = "Получить постраничный список новостей по заданному фильтру",
       description = "Возвращает список новостей с номерами, заголовками, содержанием, номерами пользователей и категорий, списками комментариев.<br>" +
           "Список выдается постранично. Размер страницы и текущий номер должен быть обязательно задан в параметрах запроса.<br>" +

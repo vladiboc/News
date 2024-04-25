@@ -5,7 +5,6 @@ import org.example.news.web.dto.category.CategoryListResponse;
 import org.example.news.web.dto.category.CategoryResponse;
 import org.example.news.web.dto.category.CategoryResponseForList;
 import org.example.news.web.dto.category.CategoryUpsertRequest;
-import org.mapstruct.DecoratedWith;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 

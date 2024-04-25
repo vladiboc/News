@@ -19,10 +19,8 @@ public class ExceptionHandlerController {
   @ExceptionHandler(EntityNotFoundException.class)
   public ResponseEntity<ErrorMsgResponse> notFound(EntityNotFoundException e) {
 
-    // TODO проверить вывод лога исключения и если надо подправить
     log.error("ExceptionHandlerController.notFound:", e);
 
-    // TODO проверить кодировку ответа и если надо сделать getLocalizedMessage()
     return ResponseEntity.status(HttpStatus.NOT_FOUND)
         .body(new ErrorMsgResponse(e.getMessage()));
   }
@@ -30,7 +28,6 @@ public class ExceptionHandlerController {
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ErrorMsgResponse> badRequest(MethodArgumentNotValidException e) {
 
-    // TODO проверить вывод лога исключения и если надо подправить
     log.error("ExceptionHandlerController.badRequest:", e);
 
     BindingResult bindingResult = e.getBindingResult();

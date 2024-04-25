@@ -31,20 +31,6 @@ public class CategoryController {
   private final CategoryMapper categoryMapper;
 
   @Operation(
-      summary = "Получить список категорий.",
-      description = "Возвращает список категорий с номерами, названием, списком новостей.",
-      tags = {"Список"})
-  @ApiResponse(
-      responseCode = "200",
-      content = {@Content(schema = @Schema(implementation = CategoryListResponse.class), mediaType = "application/json")})
-  @GetMapping("/all")
-  public ResponseEntity<CategoryListResponse> findAll() {
-    final List<Category> categories = this.categoryService.findAll();
-    final CategoryListResponse response = this.categoryMapper.categoryListToCategoryListResponse(categories);
-    return ResponseEntity.ok(response);
-  }
-
-  @Operation(
       summary = "Получить постраничный список категорий.",
       description = "Возвращает список категорий с номерами, названием, списком новостей.<br>" +
       "Список выдается постранично. Размер страницы и текущий номер должен быть обязательно задан в параметрах запроса.",

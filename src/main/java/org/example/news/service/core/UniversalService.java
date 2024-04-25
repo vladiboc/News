@@ -3,7 +3,6 @@ package org.example.news.service.core;
 import java.util.List;
 
 public interface UniversalService<T, F> {
-  List<T> findAll();
   List<T> findAllByFilter(F filter);
   T findById(int id);
   T save(T object);
