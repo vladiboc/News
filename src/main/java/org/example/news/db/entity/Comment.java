@@ -35,11 +35,16 @@ public class Comment implements Identifiable {
     this.content = content;
   }
 
-  public Comment(String content, News news, User user) {
+  public Comment(String content, User user) {
     this(content);
-    this.news = news;
     this.user = user;
   }
+
+  public Comment(String content, News news, User user) {
+    this(content, user);
+    this.news = news;
+  }
+
   public Comment(int id, String content, News news, User user) {
     this(content, news, user);
     this.id = id;

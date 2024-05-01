@@ -6,6 +6,7 @@ import org.example.news.db.entity.News;
 import org.example.news.db.entity.User;
 import org.example.news.web.dto.news.NewsFilter;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Component;
 
 public interface NewsSpecification {
 

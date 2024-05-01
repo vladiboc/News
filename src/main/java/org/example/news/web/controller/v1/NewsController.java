@@ -2,12 +2,14 @@ package org.example.news.web.controller.v1;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.news.aop.MatchableNewsUser;
 import org.example.news.db.entity.News;
 import org.example.news.mapper.v1.NewsMapper;
 import org.example.news.service.NewsService;
@@ -88,9 +90,11 @@ public class NewsController {
   }
 
   @Operation(
-      summary = "Обновить новость",
+      summary = "Обновить новость. Разрешено только пользователю-создателю новости. " +
+          "Идентификатор пользователя-создателя принимается через http-заголовок.",
       description = "Возвращает номер обновленной новости, заголовок, содержание, номер пользователя, номер категории, списки комментариев",
       tags = {"Номер", "Обновление"})
+  @Parameter(name = "X-User-Id", in = ParameterIn.HEADER, required = true, description = "Идентификатор пользователя-создателя новости")
   @ApiResponse(
       responseCode = "200",
       content = {@Content(schema = @Schema(implementation = NewsResponse.class), mediaType = "application/json")})
@@ -98,6 +102,7 @@ public class NewsController {
       responseCode = "400",
       content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
   @PutMapping("/{id}")
+  @MatchableNewsUser
   public ResponseEntity<NewsResponse> update(@PathVariable int id, @RequestBody @Valid NewsUpsertRequest request) {
     final News editedNews = this.newsMapper.requestToNews(request);
     final News updatedNews = this.newsService.update(id, editedNews);
@@ -106,12 +111,15 @@ public class NewsController {
   }
 
   @Operation(
-      summary = "Удалить новость по номеру",
+      summary = "Удалить новость по номеру Разрешено только пользователю-создателю новости. " +
+          "Идентификатор пользователя-создателя принимается через http-заголовок.",
       description = "Удаляет новость по номеру",
       tags = {"Номер", "Удаление"})
+  @Parameter(name = "X-User-Id", in = ParameterIn.HEADER, required = true, description = "Идентификатор пользователя-создателя новости")
   @ApiResponse(
       responseCode = "204")
   @DeleteMapping("/{id}")
+  @MatchableNewsUser
   public ResponseEntity<Void> delete(@PathVariable int id) {
     this.newsService.deleteById(id);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

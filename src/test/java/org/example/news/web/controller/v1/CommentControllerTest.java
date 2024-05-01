@@ -3,6 +3,7 @@ package org.example.news.web.controller.v1;
 import jakarta.persistence.EntityNotFoundException;
 import net.bytebuddy.utility.RandomString;
 import net.javacrumbs.jsonunit.JsonAssert;
+import org.example.news.aop.MatchingUserAspect;
 import org.example.news.db.entity.Category;
 import org.example.news.db.entity.Comment;
 import org.example.news.db.entity.News;
@@ -19,9 +20,15 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class CommentControllerTest extends AbstractControllerTest {
   @MockBean
@@ -32,7 +39,6 @@ class CommentControllerTest extends AbstractControllerTest {
   @Test
   void whenFindAllByFilter_thenReturnAllCommentsByFilter() throws Exception {
     final User user1 = new User(1, "Пользователь №1");
-    final User user2 = new User(2, "Пользователь №2");
     final Category category1 = new Category(1, "Категория №1");
     final Category category2 = new Category(2, "Категория №2");
     final News news1 = new News(1, "Заголовок №1", "Новость №1", user1, category1);
@@ -115,13 +121,22 @@ class CommentControllerTest extends AbstractControllerTest {
     final CommentResponse response = new CommentResponse(1, "Исправленный Комментарий №1 Пользователя №1", 1, 1);
 
     Mockito.when(this.commentMapper.requestToComment(request)).thenReturn(editedComment);
+    Mockito.when(this.commentService.findById(1)).thenReturn(editedComment);
     Mockito.when(this.commentService.update(1, editedComment)).thenReturn(updatedComment);
     Mockito.when(this.commentMapper.commentToCommentResponse(updatedComment)).thenReturn(response);
 
     final String expectedResponse = TestStringUtil.readStringFromResource("response/comment/update_comment_response.json");
-    final String actualResponse = this.mockPut("/api/v1/comment/1", request, HttpStatus.OK);
+    final String actualResponse = this.mockMvc.perform(put("/api/v1/comment/1")
+            .header(MatchingUserAspect.HTTP_HEADER_USER_ID, 1)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(this.objectMapper.writeValueAsString(request)))
+        .andExpect(status().isOk())
+        .andReturn()
+        .getResponse()
+        .getContentAsString(StandardCharsets.UTF_8);
 
     Mockito.verify(this.commentMapper, Mockito.times(1)).requestToComment(request);
+    Mockito.verify(this.commentService, Mockito.times(1)).findById(1);
     Mockito.verify(this.commentService, Mockito.times(1)).update(1, editedComment);
     Mockito.verify(this.commentMapper, Mockito.times(1)).commentToCommentResponse(updatedComment);
 
@@ -130,8 +145,16 @@ class CommentControllerTest extends AbstractControllerTest {
 
   @Test
   void whenDeleteById_thenReturnNoContent() throws Exception {
-    this.mockDelete("/api/v1/comment/1", HttpStatus.NO_CONTENT);
+    final User user = new User(1, "Пользователь №1");
+    final Comment comment = new Comment("Комментарий №1", user);
 
+    Mockito.when(this.commentService.findById(1)).thenReturn(comment);
+
+    this.mockMvc.perform(delete("/api/v1/comment/1")
+            .header(MatchingUserAspect.HTTP_HEADER_USER_ID, 1))
+        .andExpect(status().isNoContent());
+
+    Mockito.verify(this.commentService, Mockito.times(1)).findById(1);
     Mockito.verify(this.commentService, Mockito.times(1)).deleteById(1);
   }
 

@@ -2,12 +2,15 @@ package org.example.news.web.controller.v1;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.news.aop.MatchableCommentUser;
+import org.example.news.aop.MatchableNewsUser;
 import org.example.news.db.entity.Comment;
 import org.example.news.mapper.v1.CommentMapper;
 import org.example.news.service.CommentService;
@@ -82,9 +85,11 @@ public class CommentController {
   }
 
   @Operation(
-      summary = "Обновить комментарий.",
+      summary = "Обновить комментарий. Разрешено только пользователю-создателю комментария. " +
+          "Идентификатор пользователя-создателя принимается через http-заголовок.",
       description = "Возвращает номер обновленного комментария, содержание, номер новости и номер пользователя.",
       tags = {"Номер", "Обновление"})
+  @Parameter(name = "X-User-Id", in = ParameterIn.HEADER, required = true, description = "Идентификатор пользователя-создателя новости")
   @ApiResponse(
       responseCode = "200",
       content = {@Content(schema = @Schema(implementation = CommentResponse.class), mediaType = "application/json")})
@@ -92,6 +97,7 @@ public class CommentController {
       responseCode = "400",
       content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
   @PutMapping("/{id}")
+  @MatchableCommentUser
   public ResponseEntity<CommentResponse> update(@PathVariable int id, @RequestBody @Valid CommentUpsertRequest request) {
     final Comment editedComment = this.commentMapper.requestToComment(request);
     final Comment updatedComment = this.commentService.update(id, editedComment);
@@ -100,12 +106,15 @@ public class CommentController {
   }
 
   @Operation(
-      summary = "Удалить комментарий по номеру.",
+      summary = "Удалить комментарий по номеру. Разрешено только пользователю-создателю комментария. " +
+          "Идентификатор пользователя-создателя принимается через http-заголовок.",
       description = "Удаляет комментарий по номеру.",
       tags = {"Номер", "Удаление"})
+  @Parameter(name = "X-User-Id", in = ParameterIn.HEADER, required = true, description = "Идентификатор пользователя-создателя новости")
   @ApiResponse(
       responseCode = "204")
   @DeleteMapping("/{id}")
+  @MatchableCommentUser
   public ResponseEntity<Void> delete(@PathVariable int id) {
     this.commentService.deleteById(id);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

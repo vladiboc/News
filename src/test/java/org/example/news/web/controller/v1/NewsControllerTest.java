@@ -3,6 +3,7 @@ package org.example.news.web.controller.v1;
 import jakarta.persistence.EntityNotFoundException;
 import net.bytebuddy.utility.RandomString;
 import net.javacrumbs.jsonunit.JsonAssert;
+import org.example.news.aop.MatchingUserAspect;
 import org.example.news.db.entity.Category;
 import org.example.news.db.entity.News;
 import org.example.news.db.entity.User;
@@ -15,9 +16,15 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class NewsControllerTest extends AbstractControllerTest {
   @MockBean
@@ -108,13 +115,22 @@ class NewsControllerTest extends AbstractControllerTest {
     final NewsResponse response = new NewsResponse(1, "Заголовок №1", "Новость №1 обновлённая", 1, 1);
 
     Mockito.when(this.newsMapper.requestToNews(request)).thenReturn(editedNews);
+    Mockito.when(this.newsService.findById(1)).thenReturn(editedNews);
     Mockito.when(this.newsService.update(1, editedNews)).thenReturn(updatedNews);
     Mockito.when(this.newsMapper.newsToNewsResponse(updatedNews)).thenReturn(response);
 
     final String expectedResponse = TestStringUtil.readStringFromResource("response/news/update_news_response.json");
-    final String actualResponse = this.mockPut("/api/v1/news/1", request, HttpStatus.OK);
+    final String actualResponse = this.mockMvc.perform(put("/api/v1/news/1")
+        .header(MatchingUserAspect.HTTP_HEADER_USER_ID, 1)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(this.objectMapper.writeValueAsString(request)))
+        .andExpect(status().isOk())
+        .andReturn()
+        .getResponse()
+        .getContentAsString(StandardCharsets.UTF_8);
 
     Mockito.verify(this.newsMapper, Mockito.times(1)).requestToNews(request);
+    Mockito.verify(this.newsService, Mockito.times(1)).findById(1);
     Mockito.verify(this.newsService, Mockito.times(1)).update(1, editedNews);
     Mockito.verify(this.newsMapper, Mockito.times(1)).newsToNewsResponse(updatedNews);
 
@@ -123,8 +139,16 @@ class NewsControllerTest extends AbstractControllerTest {
 
   @Test
   void whenDeleteById_thenReturnNoContent() throws Exception {
-    this.mockDelete("/api/v1/news/1", HttpStatus.NO_CONTENT);
+    final User user = new User(1, "Пользователь №1");
+    final News news = new News("Заголовок №1", "Новость №1", user);
 
+    Mockito.when(this.newsService.findById(1)).thenReturn(news);
+
+    this.mockMvc.perform(delete("/api/v1/news/1")
+        .header(MatchingUserAspect.HTTP_HEADER_USER_ID, 1))
+        .andExpect(status().isNoContent());
+
+    Mockito.verify(this.newsService, Mockito.times(1)).findById(1);
     Mockito.verify(this.newsService, Mockito.times(1)).deleteById(1);
   }
 

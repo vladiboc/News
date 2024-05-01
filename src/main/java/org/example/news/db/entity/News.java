@@ -44,9 +44,13 @@ public class News implements Identifiable {
     this.content = content;
   }
 
-  public News(String title, String content, User user, Category category) {
+  public News(String title, String content, User user) {
     this(title, content);
     this.user = user;
+  }
+
+  public News(String title, String content, User user, Category category) {
+    this(title, content, user);
     this.category = category;
   }
 
