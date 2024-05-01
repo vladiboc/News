@@ -1,4 +1,4 @@
-package org.example.news.aop;
+package org.example.news.aop.matchable;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

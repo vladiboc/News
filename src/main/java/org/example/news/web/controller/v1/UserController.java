@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.news.aop.loggable.Loggable;
 import org.example.news.db.entity.User;
 import org.example.news.mapper.v1.UserMapper;
 import org.example.news.service.UserService;
@@ -40,6 +41,7 @@ public class UserController {
   @ApiResponse(
       responseCode = "200",
       content = {@Content(schema = @Schema(implementation = UserListResponse.class), mediaType = "application/json")})
+  @Loggable
   @GetMapping
   public ResponseEntity<UserListResponse> findAllByFilter(@Parameter(hidden = true) @Valid UserFilter filter) {
     final List<User> users = this.userService.findAllByFilter(filter);
@@ -57,6 +59,7 @@ public class UserController {
   @ApiResponse(
       responseCode = "404",
       content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
+  @Loggable
   @GetMapping("/{id}")
   public ResponseEntity<UserResponse> findById(@PathVariable int id) {
     final User foundUser = this.userService.findById(id);
@@ -74,6 +77,7 @@ public class UserController {
   @ApiResponse(
       responseCode = "400",
       content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
+  @Loggable
   @PostMapping
   public ResponseEntity<UserResponse> create(@RequestBody @Valid UserUpsertRequest request) {
     final User newUser = this.userMapper.requestToUser(request);
@@ -92,6 +96,7 @@ public class UserController {
   @ApiResponse(
       responseCode = "400",
       content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
+  @Loggable
   @PutMapping("/{id}")
   public ResponseEntity<UserResponse> update(@PathVariable int id, @RequestBody @Valid UserUpsertRequest request) {
     final User editedUser = this.userMapper.requestToUser(request);
@@ -106,6 +111,7 @@ public class UserController {
       tags = {"Номер", "Удаление"})
   @ApiResponse(
       responseCode = "204")
+  @Loggable
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(@PathVariable int id) {
     this.userService.deleteById(id);

@@ -1,5 +1,6 @@
 package org.example.news.mapper.v1;
 
+import org.example.news.aop.loggable.Loggable;
 import org.example.news.db.entity.User;
 import org.example.news.web.dto.user.UserListResponse;
 import org.example.news.web.dto.user.UserResponse;
@@ -16,6 +17,7 @@ public interface UserMapper {
 
   UserResponse userToUserResponse(User user);
 
+  @Loggable
   default UserResponseForList userToUserResponseForList(User user) {
     return new UserResponseForList(
         user.getId(),
@@ -27,6 +29,7 @@ public interface UserMapper {
 
   List<UserResponseForList> userListToListOfUserResponseForList(List<User> users);
 
+  @Loggable
   default UserListResponse userListToUserListResponse(List<User> users) {
     return new UserListResponse(this.userListToListOfUserResponseForList(users));
   }

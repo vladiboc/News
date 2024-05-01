@@ -9,8 +9,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.news.aop.MatchableCommentUser;
-import org.example.news.aop.MatchableNewsUser;
+import org.example.news.aop.loggable.Loggable;
+import org.example.news.aop.matchable.MatchableCommentUser;
 import org.example.news.db.entity.Comment;
 import org.example.news.mapper.v1.CommentMapper;
 import org.example.news.service.CommentService;
@@ -19,7 +19,6 @@ import org.example.news.web.dto.comment.CommentListResponse;
 import org.example.news.web.dto.comment.CommentResponse;
 import org.example.news.web.dto.comment.CommentUpsertRequest;
 import org.example.news.web.dto.error.ErrorMsgResponse;
-import org.example.news.web.dto.user.UserListResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,6 +41,7 @@ public class CommentController {
   @ApiResponse(
       responseCode = "200",
       content = {@Content(schema = @Schema(implementation = CommentListResponse.class), mediaType = "application/json")})
+  @Loggable
   @GetMapping
   public ResponseEntity<CommentListResponse> findAllByFilter(@Parameter(hidden = true) @Valid CommentFilter filter) {
     final List<Comment> comments = this.commentService.findAllByFilter(filter);
@@ -59,6 +59,7 @@ public class CommentController {
   @ApiResponse(
       responseCode = "404",
       content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
+  @Loggable
   @GetMapping("/{id}")
   public ResponseEntity<CommentResponse> findById(@PathVariable int id) {
     final Comment comment = this.commentService.findById(id);
@@ -76,6 +77,7 @@ public class CommentController {
   @ApiResponse(
       responseCode = "400",
       content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
+  @Loggable
   @PostMapping
   public ResponseEntity<CommentResponse> create(@RequestBody @Valid CommentUpsertRequest request) {
     final Comment newComment = this.commentMapper.requestToComment(request);
@@ -96,8 +98,9 @@ public class CommentController {
   @ApiResponse(
       responseCode = "400",
       content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
-  @PutMapping("/{id}")
+  @Loggable
   @MatchableCommentUser
+  @PutMapping("/{id}")
   public ResponseEntity<CommentResponse> update(@PathVariable int id, @RequestBody @Valid CommentUpsertRequest request) {
     final Comment editedComment = this.commentMapper.requestToComment(request);
     final Comment updatedComment = this.commentService.update(id, editedComment);
@@ -113,8 +116,9 @@ public class CommentController {
   @Parameter(name = "X-User-Id", in = ParameterIn.HEADER, required = true, description = "Идентификатор пользователя-создателя новости")
   @ApiResponse(
       responseCode = "204")
-  @DeleteMapping("/{id}")
+  @Loggable
   @MatchableCommentUser
+  @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(@PathVariable int id) {
     this.commentService.deleteById(id);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

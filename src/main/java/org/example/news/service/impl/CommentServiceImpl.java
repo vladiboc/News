@@ -1,5 +1,6 @@
 package org.example.news.service.impl;
 
+import org.example.news.aop.loggable.Loggable;
 import org.example.news.db.entity.Comment;
 import org.example.news.db.entity.User;
 import org.example.news.db.repository.CommentRepository;
@@ -19,6 +20,7 @@ public class CommentServiceImpl extends AbstractUniversalService<Comment, Commen
     super(commentRepository, ErrorMsg.COMMENT_BY_ID_NOT_FOUND);
   }
 
+  @Loggable
   @Override
   public List<Comment> findAllByFilter(CommentFilter filter) {
     return super.repository.findAll(CommentSpecification.withFilter(filter));

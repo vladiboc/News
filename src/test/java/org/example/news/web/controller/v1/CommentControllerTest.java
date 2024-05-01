@@ -3,7 +3,7 @@ package org.example.news.web.controller.v1;
 import jakarta.persistence.EntityNotFoundException;
 import net.bytebuddy.utility.RandomString;
 import net.javacrumbs.jsonunit.JsonAssert;
-import org.example.news.aop.MatchingUserAspect;
+import org.example.news.aop.matchable.MatchingUserAspect;
 import org.example.news.db.entity.Category;
 import org.example.news.db.entity.Comment;
 import org.example.news.db.entity.News;

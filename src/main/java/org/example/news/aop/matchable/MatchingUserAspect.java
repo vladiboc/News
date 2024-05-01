@@ -1,9 +1,10 @@
-package org.example.news.aop;
+package org.example.news.aop.matchable;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.example.news.aop.loggable.Loggable;
 import org.example.news.exception.UserUnmatchedException;
 import org.example.news.service.CommentService;
 import org.example.news.service.NewsService;

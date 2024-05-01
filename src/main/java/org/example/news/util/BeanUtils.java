@@ -2,12 +2,14 @@ package org.example.news.util;
 
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
+import org.example.news.aop.loggable.Loggable;
 
 import java.lang.reflect.Field;
 
 @UtilityClass
 public class BeanUtils {
   @SneakyThrows
+  @Loggable
   public void copyNonNullFields(Object source, Object destination) {
     Class<?> clazz = source.getClass();
     Field[] fields = clazz.getDeclaredFields();

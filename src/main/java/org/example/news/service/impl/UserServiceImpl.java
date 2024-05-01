@@ -1,5 +1,6 @@
 package org.example.news.service.impl;
 
+import org.example.news.aop.loggable.Loggable;
 import org.example.news.db.entity.User;
 import org.example.news.db.repository.UserRepository;
 import org.example.news.service.UserService;
@@ -17,6 +18,7 @@ public class UserServiceImpl extends AbstractUniversalService<User, UserFilter> 
     super(userRepository, ErrorMsg.USER_BY_ID_NOT_FOUND);
   }
 
+  @Loggable
   @Override
   public List<User> findAllByFilter(UserFilter filter) {
     return super.repository.findAll(

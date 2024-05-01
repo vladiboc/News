@@ -1,5 +1,6 @@
 package org.example.news.service.impl;
 
+import org.example.news.aop.loggable.Loggable;
 import org.example.news.db.entity.Category;
 import org.example.news.db.entity.Comment;
 import org.example.news.db.repository.CategoryRepository;
@@ -19,6 +20,7 @@ public class CategoryServiceImpl extends AbstractUniversalService<Category, Cate
     super(categoryRepository, ErrorMsg.CATEGORY_BY_ID_NOT_FOUND);
   }
 
+  @Loggable
   @Override
   public List<Category> findAllByFilter(CategoryFilter filter) {
     return super.repository.findAll(

@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.news.aop.loggable.Loggable;
 import org.example.news.db.entity.Category;
 import org.example.news.mapper.v1.CategoryMapper;
 import org.example.news.service.CategoryService;
@@ -40,6 +41,7 @@ public class CategoryController {
   @ApiResponse(
       responseCode = "200",
       content = {@Content(schema = @Schema(implementation = CategoryListResponse.class), mediaType = "application/json")})
+  @Loggable
   @GetMapping
   public ResponseEntity<CategoryListResponse> findAllByFilter(@Parameter(hidden = true) @Valid CategoryFilter filter) {
     final List<Category> categories = this.categoryService.findAllByFilter(filter);
@@ -57,6 +59,7 @@ public class CategoryController {
   @ApiResponse(
       responseCode = "404",
       content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
+  @Loggable
   @GetMapping("/{id}")
   public ResponseEntity<CategoryResponse> findById(@PathVariable int id) {
     final Category category = this.categoryService.findById(id);
@@ -74,6 +77,7 @@ public class CategoryController {
   @ApiResponse(
       responseCode = "400",
       content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
+  @Loggable
   @PostMapping
   public ResponseEntity<CategoryResponse> create(@RequestBody @Valid CategoryUpsertRequest request) {
     final Category newCategory = this.categoryMapper.requestToCategory(request);
@@ -92,6 +96,7 @@ public class CategoryController {
   @ApiResponse(
       responseCode = "400",
       content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
+  @Loggable
   @PutMapping("/{id}")
   public ResponseEntity<CategoryResponse> update(@PathVariable int id, @RequestBody @Valid CategoryUpsertRequest request) {
     final Category editedCategory = this.categoryMapper.requestToCategory(request);
@@ -106,6 +111,7 @@ public class CategoryController {
       tags = {"Номер", "Удаление"})
   @ApiResponse(
       responseCode = "204")
+  @Loggable
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(@PathVariable int id) {
     this.categoryService.deleteById(id);

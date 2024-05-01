@@ -1,5 +1,6 @@
 package org.example.news.service.impl;
 
+import org.example.news.aop.loggable.Loggable;
 import org.example.news.db.entity.News;
 import org.example.news.db.repository.NewsRepository;
 import org.example.news.db.specification.NewsSpecification;
@@ -18,6 +19,7 @@ public class NewsServiceImpl extends AbstractUniversalService<News, NewsFilter> 
     super(newsRepository, ErrorMsg.NEWS_BY_ID_NOT_FOUND);
   }
 
+  @Loggable
   @Override
   public List<News> findAllByFilter(NewsFilter filter) {
     return super.repository.findAll(NewsSpecification.withFilter(filter),

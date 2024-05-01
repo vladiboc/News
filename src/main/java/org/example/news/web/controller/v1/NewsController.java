@@ -9,7 +9,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.news.aop.MatchableNewsUser;
+import org.example.news.aop.loggable.Loggable;
+import org.example.news.aop.matchable.MatchableNewsUser;
 import org.example.news.db.entity.News;
 import org.example.news.mapper.v1.NewsMapper;
 import org.example.news.service.NewsService;
@@ -47,6 +48,7 @@ public class NewsController {
   @ApiResponse(
       responseCode = "200",
       content = {@Content(schema = @Schema(implementation = NewsListResponse.class), mediaType = "application/json")})
+  @Loggable
   @GetMapping
   public ResponseEntity<NewsListResponse> findAllByFilter(@Parameter(hidden = true) @Valid NewsFilter filter) {
     final List<News> news = this.newsService.findAllByFilter(filter);
@@ -64,6 +66,7 @@ public class NewsController {
   @ApiResponse(
       responseCode = "404",
       content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
+  @Loggable
   @GetMapping("/{id}")
   public ResponseEntity<NewsResponse> findById(@PathVariable int id) {
     final News news = this.newsService.findById(id);
@@ -81,6 +84,7 @@ public class NewsController {
   @ApiResponse(
       responseCode = "400",
       content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
+  @Loggable
   @PostMapping
     public ResponseEntity<NewsResponse> create(@RequestBody @Valid NewsUpsertRequest request) {
     final News newNews = this.newsMapper.requestToNews(request);
@@ -101,8 +105,9 @@ public class NewsController {
   @ApiResponse(
       responseCode = "400",
       content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
-  @PutMapping("/{id}")
+  @Loggable
   @MatchableNewsUser
+  @PutMapping("/{id}")
   public ResponseEntity<NewsResponse> update(@PathVariable int id, @RequestBody @Valid NewsUpsertRequest request) {
     final News editedNews = this.newsMapper.requestToNews(request);
     final News updatedNews = this.newsService.update(id, editedNews);
@@ -118,8 +123,9 @@ public class NewsController {
   @Parameter(name = "X-User-Id", in = ParameterIn.HEADER, required = true, description = "Идентификатор пользователя-создателя новости")
   @ApiResponse(
       responseCode = "204")
-  @DeleteMapping("/{id}")
+  @Loggable
   @MatchableNewsUser
+  @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(@PathVariable int id) {
     this.newsService.deleteById(id);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

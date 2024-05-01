@@ -1,5 +1,6 @@
 package org.example.news.mapper.v1;
 
+import org.example.news.aop.loggable.Loggable;
 import org.example.news.db.entity.News;
 import org.example.news.web.dto.news.NewsListResponse;
 import org.example.news.web.dto.news.NewsResponse;
@@ -16,9 +17,12 @@ import java.util.List;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = {CategoryMapper.class, CommentMapper.class})
 public interface NewsMapper {
   News requestToNews(NewsUpsertRequest request);
+
   @Mapping(source = "news.user.id", target = "userId")
   @Mapping(source = "news.category.id", target = "categoryId")
   NewsResponse newsToNewsResponse(News news);
+
+  @Loggable
   default NewsResponseForList newsToNewsResponseForList(News news) {
     return new NewsResponseForList(
         news.getId(),
@@ -29,7 +33,10 @@ public interface NewsMapper {
         news.getComments().size()
     );
   }
+
   List<NewsResponseForList> newsListToListOfNewsResponse(List<News> news);
+
+  @Loggable
   default NewsListResponse newsListToNewsListResponse(List<News> news) {
     return new NewsListResponse(this.newsListToListOfNewsResponse(news));
   }

@@ -1,5 +1,6 @@
 package org.example.news.mapper.v1;
 
+import org.example.news.aop.loggable.Loggable;
 import org.example.news.db.entity.News;
 import org.example.news.service.CategoryService;
 import org.example.news.service.UserService;
@@ -12,6 +13,7 @@ public abstract class NewsMapperDelegate implements NewsMapper {
   @Autowired
   private CategoryService categoryService;
 
+  @Loggable
   @Override
   public News requestToNews(NewsUpsertRequest request) {
     News news = new News(request.getTitle(), request.getContent());
