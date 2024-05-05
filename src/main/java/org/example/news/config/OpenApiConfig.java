@@ -1,3 +1,6 @@
+/**
+ * Конфигуращия для OpenApi
+ */
 package org.example.news.config;
 
 import io.swagger.v3.oas.models.OpenAPI;

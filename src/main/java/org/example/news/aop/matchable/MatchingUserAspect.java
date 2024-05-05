@@ -1,10 +1,14 @@
+/**
+ * Аспект для аннотаций:
+ * @MatchableNewsUser - проверка пользователя, создавшего новость
+ * @MatchableCommentUser - проверка пользоваателя, создавшего комментарий
+ */
 package org.example.news.aop.matchable;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.example.news.aop.loggable.Loggable;
 import org.example.news.exception.UserUnmatchedException;
 import org.example.news.service.CommentService;
 import org.example.news.service.NewsService;
@@ -57,6 +61,12 @@ public class MatchingUserAspect {
     return Integer.valueOf(pathVariables.get("id"));
   }
 
+  /**
+   * Получить id пользователя, переданный через заголовок запроса
+   * @param request - объект запроса
+   * @return - id пользователя из заголовка запроса
+   * @throws UserUnmatchedException - при отсутствии заголовка с id или при отрицательном id в заголовке
+   */
   private int getHeaderId(HttpServletRequest request) throws UserUnmatchedException {
     String headerValue = request.getHeader(MatchingUserAspect.HTTP_HEADER_USER_ID);
     try {

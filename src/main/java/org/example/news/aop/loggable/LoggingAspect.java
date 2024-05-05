@@ -1,3 +1,6 @@
+/**
+ * Аспект для аннотации @Loggable
+ */
 package org.example.news.aop.loggable;
 
 import lombok.extern.slf4j.Slf4j;

@@ -1,3 +1,6 @@
+/**
+ * Здесь собраны все константы - размеры строк для валидации
+ */
 package org.example.news.util;
 
 import lombok.experimental.UtilityClass;

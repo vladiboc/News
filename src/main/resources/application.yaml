@@ -3,7 +3,6 @@ server:
 
 springdoc:
   swagger-ui:
-#    disable-swagger-default-url: true
     path: /swagger
 
 spring:

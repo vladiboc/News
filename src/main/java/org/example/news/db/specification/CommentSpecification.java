@@ -1,3 +1,6 @@
+/**
+ * Спецификация для поиска в БД комментариев, созданных заданным пользователем
+ */
 package org.example.news.db.specification;
 
 import jakarta.annotation.Nullable;

@@ -1,6 +1,7 @@
+/**
+ * Общие методы для всех сервисов приложения
+ */
 package org.example.news.service.core;
-
-import org.example.news.aop.loggable.Loggable;
 
 import java.util.List;
 

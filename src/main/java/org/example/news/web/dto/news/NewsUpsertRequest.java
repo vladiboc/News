@@ -18,18 +18,19 @@ public class NewsUpsertRequest {
   @Size(
       min = StringSizes.NEWS_TITLE_MIN,
       max = StringSizes.NEWS_TITLE_MAX,
-      message = ErrorMsg.NEWS_TITLE_SIZE_FROM_MIN_TO_MAX
-  )
+      message = ErrorMsg.NEWS_TITLE_SIZE_FROM_MIN_TO_MAX)
   private String title;
+
   @NotBlank(message = ErrorMsg.NEWS_CONTENT_MUST_BE_FILLED)
   @Size(
       min = StringSizes.NEWS_CONTENT_MIN,
       max = StringSizes.NEWS_CONTENT_MAX,
-      message = ErrorMsg.NEWS_CONTENT_SIZE_FROM_MIN_TO_MAX
-  )
+      message = ErrorMsg.NEWS_CONTENT_SIZE_FROM_MIN_TO_MAX)
   private String content;
+
   @Positive(message = ErrorMsg.NEWS_USER_ID_MUST_BE_POSITIVE)
   private int userId;
+
   @Positive(message = ErrorMsg.NEWS_CATEGORY_MUST_BE_POSITIVE)
   private int categoryId;
 }

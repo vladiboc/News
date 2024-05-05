@@ -1,3 +1,6 @@
+/**
+ * Имплементация общих методов для всех сервисов приложения
+ */
 package org.example.news.service.core;
 
 import jakarta.persistence.EntityNotFoundException;
