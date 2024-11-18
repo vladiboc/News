@@ -13,11 +13,12 @@
 
 ## Стек технологий
 - Java 17
-- SpringFramework Boot 3.2.3
-- Gradle 8.7
-- Docker 24.0.7
-- Docker Compose 2.20.2
+- SpringFramework Boot 3.3.0
+- Gradle 8.6
 - PostgreSQL 12.3
+- Docker Compose 2.20.2
+- Docker 24.0.7
+- Git 2.42.2
 
 ## Инструкция по локальному запуску приложения
 
@@ -42,7 +43,7 @@
 2. В той же директории запуска разархивируйте скачанный zip-файл, например так:  
    ``` unzip news.jar.zip```
 3. Затем запустите приложение, в той же директории запуска выполните следующую команду:  
-    ``` java -jar webcontacts-0.0.1.jar ```  
+    ``` java -jar news-0.0.1.jar ```  
     Приложение запустится и его API будет доступен из браузера по URL http://localhost:8080/swagger  
 
 **III Настройки приложения**  
