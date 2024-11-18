@@ -2,10 +2,10 @@ package org.example.news.db.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.FieldNameConstants;
-import org.example.news.db.entity.core.Identifiable;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -23,6 +23,12 @@ public class User implements Identifiable {
   private int id;
   @Column(name = "user_name")
   private String name;
+  @Column(name = "user_password")
+  private String password;
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
+  @EqualsAndHashCode.Exclude
+  @ToString.Exclude
+  private List<Role> roles = new ArrayList<>();
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
   @ToString.Exclude
   private List<News> news = new ArrayList<>();

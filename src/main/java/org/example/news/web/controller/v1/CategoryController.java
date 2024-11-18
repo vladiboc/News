@@ -26,16 +26,16 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/category")
 @RequiredArgsConstructor
-@Tag(name = "Категория 1.0", description = "Управление категориями новостей версия 1.0")
+@Tag(name = "Category", description = "Управление категориями новостей")
 public class CategoryController {
   private final CategoryService categoryService;
   private final CategoryMapper categoryMapper;
 
   @Operation(
       summary = "Получить постраничный список категорий.",
-      description = "Возвращает список категорий с номерами, названием, списком новостей.<br>" +
+      description = "Возвращает список категорий с идентификаторами, названием, списком новостей.<br>" +
       "Список выдается постранично. Размер страницы и текущий номер должен быть обязательно задан в параметрах запроса.",
-      tags = {"Список"})
+      tags = {"Get"})
   @Parameter(name = "pageSize", required = true, description = "Размер страницы получаемых данных")
   @Parameter(name = "pageNumber", required = true, description = "Номер страницы получаемых данных")
   @ApiResponse(
@@ -50,9 +50,9 @@ public class CategoryController {
   }
 
   @Operation(
-      summary = "Получить категорию по номеру.",
-      description = "Возвращает номер категории, название, список новостей.",
-      tags = {"Номер"})
+      summary = "Получить категорию по идентификатору.",
+      description = "Возвращает идентификатор категории, название, список новостей.",
+      tags = {"Get"})
   @ApiResponse(
       responseCode = "200",
       content = {@Content(schema = @Schema(implementation = CategoryResponse.class), mediaType = "application/json")})
@@ -69,8 +69,9 @@ public class CategoryController {
 
   @Operation(
       summary = "Создать категорию.",
-      description = "Возвращает номер созданной категории, название, номер новости и номер пользователя.",
-      tags = {"Создание"})
+      description = "Возвращает идентификатор созданной категории, название," +
+          "идентификатор новости и идентификатор пользователя.",
+      tags = {"Post"})
   @ApiResponse(
       responseCode = "201",
       content = {@Content(schema = @Schema(implementation = CategoryResponse.class), mediaType = "application/json")})
@@ -88,8 +89,8 @@ public class CategoryController {
 
   @Operation(
       summary = "Обновить категорию.",
-      description = "Возвращает номер обновленной категории, название, номер новости и номер пользователя.",
-      tags = {"Номер", "Обновление"})
+      description = "Возвращает идентификатор обновленной категории, название, идентификатор новости и идентификатор пользователя.",
+      tags = {"Put"})
   @ApiResponse(
       responseCode = "200",
       content = {@Content(schema = @Schema(implementation = CategoryResponse.class), mediaType = "application/json")})
@@ -106,9 +107,9 @@ public class CategoryController {
   }
 
   @Operation(
-      summary = "Удалить категорию по номеру.",
-      description = "Удаляет категорию по номеру.",
-      tags = {"Номер", "Удаление"})
+      summary = "Удалить категорию по идентификатору.",
+      description = "Удаляет категорию по идентификатору.",
+      tags = {"Delete"})
   @ApiResponse(
       responseCode = "204")
   @Loggable

@@ -6,7 +6,7 @@ package org.example.news.service.core;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.example.news.aop.loggable.Loggable;
-import org.example.news.db.entity.core.Identifiable;
+import org.example.news.db.entity.Identifiable;
 import org.example.news.util.BeanUtils;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;

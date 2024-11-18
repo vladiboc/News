@@ -28,15 +28,15 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/comment")
 @RequiredArgsConstructor
-@Tag(name = "Комментарий 1.0", description = "Управление комментариями версия 1.0")
+@Tag(name = "Comment", description = "Управление комментариями")
 public class CommentController {
   private final CommentService commentService;
   private final CommentMapper commentMapper;
 
   @Operation(
       summary = "Получить список всех комментариев заданного пользователя.",
-      description = "Возвращает список комментариев с номерами, содержимым, номером новости и номером пользователя.",
-      tags = {"Список"})
+      description = "Возвращает список комментариев с идентификаторами, содержимым, идентификатором новости и идентификатором пользователя.",
+      tags = {"Get"})
   @Parameter(name = "userId", required = true, description = "Идентификатор пользователя")
   @ApiResponse(
       responseCode = "200",
@@ -50,9 +50,10 @@ public class CommentController {
   }
 
   @Operation(
-      summary = "Получить комментарий по номеру.",
-      description = "Возвращает номер комментария, содержание, номер новости и номер пользователя.",
-      tags = {"Номер"})
+      summary = "Получить комментарий по идентификатору.",
+      description = "Возвращает идентификатор комментария, содержание," +
+          "идентификатор новости и идентификатор пользователя.",
+      tags = {"Get"})
   @ApiResponse(
       responseCode = "200",
       content = {@Content(schema = @Schema(implementation = CommentResponse.class), mediaType = "application/json")})
@@ -69,8 +70,9 @@ public class CommentController {
 
   @Operation(
       summary = "Создать комментарий.",
-      description = "Возвращает номер созданного комментария, содержание, номер новости и номер пользователя.",
-      tags = {"Создание"})
+      description = "Возвращает идентификатор созданного комментария, содержание," +
+          "идентификатор новости и идентификатор пользователя.",
+      tags = {"Post"})
   @ApiResponse(
       responseCode = "201",
       content = {@Content(schema = @Schema(implementation = CommentResponse.class), mediaType = "application/json")})
@@ -89,8 +91,9 @@ public class CommentController {
   @Operation(
       summary = "Обновить комментарий. Разрешено только пользователю-создателю комментария. " +
           "Идентификатор пользователя-создателя принимается через http-заголовок.",
-      description = "Возвращает номер обновленного комментария, содержание, номер новости и номер пользователя.",
-      tags = {"Номер", "Обновление"})
+      description = "Возвращает идентификатор обновленного комментария, содержание," +
+          "идентификатор новости и идентификатор пользователя.",
+      tags = {"Put"})
   @Parameter(name = "X-User-Id", in = ParameterIn.HEADER, required = true, description = "Идентификатор пользователя-создателя новости")
   @ApiResponse(
       responseCode = "200",
@@ -109,10 +112,10 @@ public class CommentController {
   }
 
   @Operation(
-      summary = "Удалить комментарий по номеру. Разрешено только пользователю-создателю комментария. " +
+      summary = "Удалить комментарий по идентификатору. Разрешено только пользователю-создателю комментария. " +
           "Идентификатор пользователя-создателя принимается через http-заголовок.",
       description = "Удаляет комментарий по номеру.",
-      tags = {"Номер", "Удаление"})
+      tags = {"Delete"})
   @Parameter(name = "X-User-Id", in = ParameterIn.HEADER, required = true, description = "Идентификатор пользователя-создателя новости")
   @ApiResponse(
       responseCode = "204")

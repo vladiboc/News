@@ -26,16 +26,16 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/user")
 @RequiredArgsConstructor
-@Tag(name = "Пользователь 1.0", description = "Управление пользователями 1.0")
+@Tag(name = "User", description = "Управление пользователями")
 public class UserController {
   private final UserService userService;
   private final UserMapper userMapper;
 
   @Operation(
       summary = "Получить постраничный список пользователей.",
-      description = "Возвращает список пользователей с номерами, именами, количеством созданных новостей и комментариев.<br>" +
+      description = "Возвращает список пользователей с идентификаторами, именами, количеством созданных новостей и комментариев.<br>" +
           "Список выдается постранично. Размер страницы и текущий номер должен быть обязательно задан в параметрах запроса.",
-      tags = {"Список"})
+      tags = {"Get"})
   @Parameter(name = "pageSize", required = true, description = "Размер страницы получаемых данных")
   @Parameter(name = "pageNumber", required = true, description = "Номер страницы получаемых данных")
   @ApiResponse(
@@ -50,9 +50,9 @@ public class UserController {
   }
 
   @Operation(
-      summary = "Получить пользователя по номеру.",
-      description = "Возвращает номер пользователя, имя пользователя, список созданных новостей, список созданных комментариев.",
-      tags = {"Номер"})
+      summary = "Получить пользователя по идентификатору.",
+      description = "Возвращает идентификатор пользователя, имя пользователя, список созданных новостей, список созданных комментариев.",
+      tags = {"Get"})
   @ApiResponse(
       responseCode = "200",
       content = {@Content(schema = @Schema(implementation = UserResponse.class), mediaType = "application/json")})
@@ -69,8 +69,8 @@ public class UserController {
 
   @Operation(
       summary = "Создать пользователя.",
-      description = "Возвращает номер созданного пользователя, имя пользователя, пустые списки созданных новостей и комментариев.",
-      tags = {"Создание"})
+      description = "Возвращает идентификатор созданного пользователя, имя пользователя, пустые списки созданных новостей и комментариев.",
+      tags = {"Post"})
   @ApiResponse(
       responseCode = "201",
       content = {@Content(schema = @Schema(implementation = UserResponse.class), mediaType = "application/json")})
@@ -87,9 +87,9 @@ public class UserController {
   }
 
   @Operation(
-      summary = "Обновить пользователя с заданным номером.",
-      description = "Возвращает номер обновленного пользователя, имя пользователя, списки созданных новостей и комментариев.",
-      tags = {"Номер", "Обновление"})
+      summary = "Обновить пользователя с заданным идентификатором.",
+      description = "Возвращает идентификатор обновленного пользователя, имя пользователя, списки созданных новостей и комментариев.",
+      tags = {"Put"})
   @ApiResponse(
       responseCode = "200",
       content = {@Content(schema = @Schema(implementation = UserResponse.class), mediaType = "application/json")})
@@ -106,9 +106,9 @@ public class UserController {
   }
 
   @Operation(
-      summary = "Удалить пользователя по номеру.",
-      description = "Удаляет пользователя по номеру.",
-      tags = {"Номер", "Удаление"})
+      summary = "Удалить пользователя по идентификатору.",
+      description = "Удаляет пользователя по идентификатору.",
+      tags = {"Delete"})
   @ApiResponse(
       responseCode = "204")
   @Loggable
