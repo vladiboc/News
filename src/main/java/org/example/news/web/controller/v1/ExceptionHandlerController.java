@@ -1,4 +1,4 @@
-package org.example.news.web.controller.core;
+package org.example.news.web.controller.v1;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
