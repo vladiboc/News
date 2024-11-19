@@ -1,14 +1,20 @@
-/**
- * Аспект для аннотации @Loggable
- */
 package org.example.news.aop.loggable;
 
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.*;
+import org.aspectj.lang.annotation.After;
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.AfterThrowing;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
 
+/**
+ * Аспект для аннотации @Loggable.
+ * Реализация декларативного базового логирования метода или всех методав класса.
+ */
 @Aspect
 @Component
 @Slf4j
@@ -34,6 +40,13 @@ public class LoggingAspect {
     log.warn("Исключение в методе: {}", joinPoint.getSignature().toShortString(), exception);
   }
 
+  /**
+   * Включает в себя вызов аннотируемого метода.
+   *
+   * @param proceedingJoinPoint - аннотируемый метод
+   * @return - результат выполнения аннотируемого метода
+   * @throws Throwable - то, что может выбросить аннотируемый метод
+   */
   @Around("@within(Loggable) || @annotation(Loggable)")
   public Object logAround(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
     log.debug("Счёт времени начат, метод: {}", proceedingJoinPoint.getSignature().toShortString());

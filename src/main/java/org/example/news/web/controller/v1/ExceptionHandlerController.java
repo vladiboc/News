@@ -3,7 +3,7 @@ package org.example.news.web.controller.v1;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.example.news.exception.UserUnmatchedException;
-import org.example.news.util.ErrorMsg;
+import org.example.news.constant.ErrorMsg;
 import org.example.news.web.dto.error.ErrorMsgResponse;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;

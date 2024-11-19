@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.news.util.ErrorMsg;
+import org.example.news.constant.ErrorMsg;
 
 @Data
 @NoArgsConstructor

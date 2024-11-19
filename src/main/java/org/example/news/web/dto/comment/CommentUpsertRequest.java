@@ -6,8 +6,8 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.news.util.ErrorMsg;
-import org.example.news.util.StringSizes;
+import org.example.news.constant.ErrorMsg;
+import org.example.news.constant.StringSizes;
 
 @Data
 @NoArgsConstructor

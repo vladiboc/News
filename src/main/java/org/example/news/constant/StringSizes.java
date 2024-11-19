@@ -1,7 +1,7 @@
 /**
  * Здесь собраны все константы - размеры строк для валидации
  */
-package org.example.news.util;
+package org.example.news.constant;
 
 import lombok.experimental.UtilityClass;
 

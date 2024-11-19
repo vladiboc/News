@@ -11,13 +11,13 @@ import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
 
+@Loggable
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = {CommentMapper.class, NewsMapper.class})
 public interface UserMapper {
   User requestToUser(UserUpsertRequest request);
 
   UserResponse userToUserResponse(User user);
 
-  @Loggable
   default UserResponseForList userToUserResponseForList(User user) {
     return new UserResponseForList(
         user.getId(),
@@ -29,7 +29,6 @@ public interface UserMapper {
 
   List<UserResponseForList> userListToListOfUserResponseForList(List<User> users);
 
-  @Loggable
   default UserListResponse userListToUserListResponse(List<User> users) {
     return new UserListResponse(this.userListToListOfUserResponseForList(users));
   }

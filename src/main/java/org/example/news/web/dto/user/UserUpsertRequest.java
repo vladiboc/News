@@ -3,8 +3,8 @@ package org.example.news.web.dto.user;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.example.news.util.ErrorMsg;
-import org.example.news.util.StringSizes;
+import org.example.news.constant.ErrorMsg;
+import org.example.news.constant.StringSizes;
 
 @Data
 @NoArgsConstructor

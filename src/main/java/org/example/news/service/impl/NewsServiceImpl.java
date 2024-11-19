@@ -6,7 +6,7 @@ import org.example.news.db.repository.NewsRepository;
 import org.example.news.db.specification.NewsSpecification;
 import org.example.news.service.NewsService;
 import org.example.news.service.core.AbstractUniversalService;
-import org.example.news.util.ErrorMsg;
+import org.example.news.constant.ErrorMsg;
 import org.example.news.web.dto.news.NewsFilter;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;

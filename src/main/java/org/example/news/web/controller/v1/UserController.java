@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.news.aop.loggable.Loggable;
 import org.example.news.db.entity.User;
@@ -19,47 +20,51 @@ import org.example.news.web.dto.user.UserResponse;
 import org.example.news.web.dto.user.UserUpsertRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/user")
+@Loggable
 @RequiredArgsConstructor
 @Tag(name = "User", description = "Управление пользователями")
 public class UserController {
   private final UserService userService;
   private final UserMapper userMapper;
 
-  @Operation(
-      summary = "Получить постраничный список пользователей.",
-      description = "Возвращает список пользователей с идентификаторами, именами, количеством созданных новостей и комментариев.<br>" +
-          "Список выдается постранично. Размер страницы и текущий номер должен быть обязательно задан в параметрах запроса.",
-      tags = {"Get"})
+  @Operation(summary = "Получить постраничный список пользователей.", description = "Возвращает "
+      + "список пользователей с идентификаторами, именами, количеством созданных новостей и "
+      + "комментариев.<br>Список выдается постранично. Размер страницы и текущий номер должен быть "
+      + "обязательно задан в параметрах запроса.", tags = {"Get"})
+  @ApiResponse(responseCode = "200", content = {@Content(
+      schema = @Schema(implementation = UserListResponse.class),
+      mediaType = "application/json")})
   @Parameter(name = "pageSize", required = true, description = "Размер страницы получаемых данных")
   @Parameter(name = "pageNumber", required = true, description = "Номер страницы получаемых данных")
-  @ApiResponse(
-      responseCode = "200",
-      content = {@Content(schema = @Schema(implementation = UserListResponse.class), mediaType = "application/json")})
-  @Loggable
   @GetMapping
-  public ResponseEntity<UserListResponse> findAllByFilter(@Parameter(hidden = true) @Valid UserFilter filter) {
+  public ResponseEntity<UserListResponse> findAllByFilter(
+      @Parameter(hidden = true) @Valid UserFilter filter
+  ) {
     final List<User> users = this.userService.findAllByFilter(filter);
     final UserListResponse response = this.userMapper.userListToUserListResponse(users);
     return ResponseEntity.ok(response);
   }
 
-  @Operation(
-      summary = "Получить пользователя по идентификатору.",
-      description = "Возвращает идентификатор пользователя, имя пользователя, список созданных новостей, список созданных комментариев.",
-      tags = {"Get"})
-  @ApiResponse(
-      responseCode = "200",
-      content = {@Content(schema = @Schema(implementation = UserResponse.class), mediaType = "application/json")})
-  @ApiResponse(
-      responseCode = "404",
-      content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
-  @Loggable
+  @Operation(summary = "Получить пользователя по идентификатору.", description = "Возвращает "
+      + "идентификатор пользователя, имя пользователя, список созданных новостей, список созданных "
+      + "комментариев.", tags = {"Get"})
+  @ApiResponse(responseCode = "200", content = {@Content(
+          schema = @Schema(implementation = UserResponse.class),
+          mediaType = "application/json")})
+  @ApiResponse(responseCode = "404", content = {@Content(
+          schema = @Schema(implementation = ErrorMsgResponse.class),
+          mediaType = "application/json")})
   @GetMapping("/{id}")
   public ResponseEntity<UserResponse> findById(@PathVariable int id) {
     final User foundUser = this.userService.findById(id);
@@ -67,17 +72,13 @@ public class UserController {
     return ResponseEntity.ok(response);
   }
 
-  @Operation(
-      summary = "Создать пользователя.",
-      description = "Возвращает идентификатор созданного пользователя, имя пользователя, пустые списки созданных новостей и комментариев.",
+  @Operation(summary = "Создать пользователя.", description = "Возвращает идентификатор созданного"
+      + " пользователя, имя пользователя, пустые списки созданных новостей и комментариев.",
       tags = {"Post"})
-  @ApiResponse(
-      responseCode = "201",
-      content = {@Content(schema = @Schema(implementation = UserResponse.class), mediaType = "application/json")})
-  @ApiResponse(
-      responseCode = "400",
-      content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
-  @Loggable
+  @ApiResponse(responseCode = "201", content = {@Content(
+      schema = @Schema(implementation = UserResponse.class), mediaType = "application/json")})
+  @ApiResponse(responseCode = "400", content = {@Content(
+      schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
   @PostMapping
   public ResponseEntity<UserResponse> create(@RequestBody @Valid UserUpsertRequest request) {
     final User newUser = this.userMapper.requestToUser(request);
@@ -87,31 +88,26 @@ public class UserController {
   }
 
   @Operation(
-      summary = "Обновить пользователя с заданным идентификатором.",
-      description = "Возвращает идентификатор обновленного пользователя, имя пользователя, списки созданных новостей и комментариев.",
-      tags = {"Put"})
-  @ApiResponse(
-      responseCode = "200",
-      content = {@Content(schema = @Schema(implementation = UserResponse.class), mediaType = "application/json")})
-  @ApiResponse(
-      responseCode = "400",
-      content = {@Content(schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
-  @Loggable
+      summary = "Обновить пользователя с заданным идентификатором.", description = "Возвращает "
+      + "идентификатор обновленного пользователя, имя пользователя, списки созданных новостей и "
+      + "комментариев.", tags = {"Put"})
+  @ApiResponse(responseCode = "200", content = {@Content(
+      schema = @Schema(implementation = UserResponse.class), mediaType = "application/json")})
+  @ApiResponse(responseCode = "400", content = {@Content(
+      schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
   @PutMapping("/{id}")
-  public ResponseEntity<UserResponse> update(@PathVariable int id, @RequestBody @Valid UserUpsertRequest request) {
+  public ResponseEntity<UserResponse> update(
+      @PathVariable int id, @RequestBody @Valid UserUpsertRequest request
+  ) {
     final User editedUser = this.userMapper.requestToUser(request);
     final User updatedUser = this.userService.update(id, editedUser);
     final UserResponse response = this.userMapper.userToUserResponse(updatedUser);
     return ResponseEntity.ok(response);
   }
 
-  @Operation(
-      summary = "Удалить пользователя по идентификатору.",
-      description = "Удаляет пользователя по идентификатору.",
-      tags = {"Delete"})
-  @ApiResponse(
-      responseCode = "204")
-  @Loggable
+  @Operation(summary = "Удалить пользователя по идентификатору.", description = "Удаляет "
+      + "пользователя по идентификатору.", tags = {"Delete"})
+  @ApiResponse(responseCode = "204")
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(@PathVariable int id) {
     this.userService.deleteById(id);

@@ -12,7 +12,7 @@ import org.aspectj.lang.annotation.Before;
 import org.example.news.exception.UserUnmatchedException;
 import org.example.news.service.CommentService;
 import org.example.news.service.NewsService;
-import org.example.news.util.ErrorMsg;
+import org.example.news.constant.ErrorMsg;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;

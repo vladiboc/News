@@ -1,7 +1,7 @@
 /**
  * Здесь собраны все константы-сообщения об ошибках
  */
-package org.example.news.util;
+package org.example.news.constant;
 
 import lombok.experimental.UtilityClass;
 
