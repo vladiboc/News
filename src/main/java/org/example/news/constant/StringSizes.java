@@ -9,6 +9,8 @@ import lombok.experimental.UtilityClass;
 public class StringSizes {
   public static final int USER_NAME_MIN = 2;
   public static final int USER_NAME_MAX = 32;
+  public static final int USER_PASSWORD_MIN = 3;
+  public static final int USER_PASSWORD_MAX = 8;
   public static final int COMMENT_CONTENT_MIN = 2;
   public static final int COMMENT_CONTENT_MAX = 512;
   public static final int CATEGORY_NAME_MIN = 3;

@@ -81,7 +81,7 @@ public class UserController {
   @PostMapping
   public ResponseEntity<UserResponse> create(@RequestBody @Valid final UserUpsertRequest request) {
     final User newUser = this.userMapper.requestToUser(request);
-    final User savedUser = this.userService.save(newUser);
+    final User savedUser = this.userService.createNewUser(newUser);
     final UserResponse response = this.userMapper.userToUserResponse(savedUser);
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }

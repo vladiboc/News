@@ -9,8 +9,12 @@ import lombok.experimental.UtilityClass;
 public class ErrorMsg {
   public static final String NO_RESOURCE_FOUND = "Ресурс не найден!";
   public static final String USER_BY_ID_NOT_FOUND = "Пользователь с id {0} не найден!";
+  public static final String USER_BY_NAME_NOT_FOUND = "Пользователь с именем {0} не найден!";
   public static final String USER_NAME_MUST_BE_FILLED = "Имя пользователя должно быть заполнено!";
+  public static final String USER_ROLES_MUST_BE_SET = "Роли пользователя должны быть установлены!";
+  public static final String USER_PASSWORD_MUST_BE_SET = "Пароль пользователя должен быть установлен!";
   public static final String USER_NAME_SIZE_FROM_MIN_TO_MAX = "Имя пользователя должно быть от {min} до {max} символов!";
+  public static final String USER_PASSWORD_SIZE_FROM_MIN_TO_MAX = "Пароль пользователя должен быть от {min} до {max} символов!";
   public static final String COMMENT_BY_ID_NOT_FOUND = "Комментарий с id {0} не найден!";
   public static final String COMMENT_CONTENT_MUST_BE_FILLED = "Комментарий должен быть не пустым!";
   public static final String COMMENT_SIZE_FROM_MIN_TO_MAX = "Длина комментария должна быть от {min} до {max} символов!";

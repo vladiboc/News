@@ -5,4 +5,7 @@ import org.example.news.service.core.UniversalService;
 import org.example.news.web.dto.user.UserFilter;
 
 public interface UserService extends UniversalService<User, UserFilter> {
+  User createNewUser(User newUser);
+
+  User findByName(String userName);
 }
