@@ -41,7 +41,7 @@ public class UserController {
   @Operation(summary = "Получить постраничный список пользователей.", description = "Возвращает "
       + "список пользователей с идентификаторами, именами, количеством созданных новостей и "
       + "комментариев.<br>Список выдается постранично. Размер страницы и текущий номер должен быть "
-      + "обязательно задан в параметрах запроса.", tags = {"Get"})
+      + "обязательно задан в параметрах запроса.")
   @ApiResponse(responseCode = "200", content = {@Content(
       schema = @Schema(implementation = UserListResponse.class),
       mediaType = "application/json")})
@@ -49,7 +49,7 @@ public class UserController {
   @Parameter(name = "pageNumber", required = true, description = "Номер страницы получаемых данных")
   @GetMapping
   public ResponseEntity<UserListResponse> findAllByFilter(
-      @Parameter(hidden = true) @Valid UserFilter filter
+      @Parameter(hidden = true) @Valid final UserFilter filter
   ) {
     final List<User> users = this.userService.findAllByFilter(filter);
     final UserListResponse response = this.userMapper.userListToUserListResponse(users);
@@ -58,7 +58,7 @@ public class UserController {
 
   @Operation(summary = "Получить пользователя по идентификатору.", description = "Возвращает "
       + "идентификатор пользователя, имя пользователя, список созданных новостей, список созданных "
-      + "комментариев.", tags = {"Get"})
+      + "комментариев.")
   @ApiResponse(responseCode = "200", content = {@Content(
           schema = @Schema(implementation = UserResponse.class),
           mediaType = "application/json")})
@@ -66,21 +66,20 @@ public class UserController {
           schema = @Schema(implementation = ErrorMsgResponse.class),
           mediaType = "application/json")})
   @GetMapping("/{id}")
-  public ResponseEntity<UserResponse> findById(@PathVariable int id) {
+  public ResponseEntity<UserResponse> findById(@PathVariable final int id) {
     final User foundUser = this.userService.findById(id);
     final UserResponse response = this.userMapper.userToUserResponse(foundUser);
     return ResponseEntity.ok(response);
   }
 
   @Operation(summary = "Создать пользователя.", description = "Возвращает идентификатор созданного"
-      + " пользователя, имя пользователя, пустые списки созданных новостей и комментариев.",
-      tags = {"Post"})
+      + " пользователя, имя пользователя, пустые списки созданных новостей и комментариев.")
   @ApiResponse(responseCode = "201", content = {@Content(
       schema = @Schema(implementation = UserResponse.class), mediaType = "application/json")})
   @ApiResponse(responseCode = "400", content = {@Content(
       schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
   @PostMapping
-  public ResponseEntity<UserResponse> create(@RequestBody @Valid UserUpsertRequest request) {
+  public ResponseEntity<UserResponse> create(@RequestBody @Valid final UserUpsertRequest request) {
     final User newUser = this.userMapper.requestToUser(request);
     final User savedUser = this.userService.save(newUser);
     final UserResponse response = this.userMapper.userToUserResponse(savedUser);
@@ -90,14 +89,14 @@ public class UserController {
   @Operation(
       summary = "Обновить пользователя с заданным идентификатором.", description = "Возвращает "
       + "идентификатор обновленного пользователя, имя пользователя, списки созданных новостей и "
-      + "комментариев.", tags = {"Put"})
+      + "комментариев.")
   @ApiResponse(responseCode = "200", content = {@Content(
       schema = @Schema(implementation = UserResponse.class), mediaType = "application/json")})
   @ApiResponse(responseCode = "400", content = {@Content(
       schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
   @PutMapping("/{id}")
   public ResponseEntity<UserResponse> update(
-      @PathVariable int id, @RequestBody @Valid UserUpsertRequest request
+      @PathVariable int id, @RequestBody @Valid final UserUpsertRequest request
   ) {
     final User editedUser = this.userMapper.requestToUser(request);
     final User updatedUser = this.userService.update(id, editedUser);
@@ -106,10 +105,10 @@ public class UserController {
   }
 
   @Operation(summary = "Удалить пользователя по идентификатору.", description = "Удаляет "
-      + "пользователя по идентификатору.", tags = {"Delete"})
+      + "пользователя по идентификатору.")
   @ApiResponse(responseCode = "204")
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> delete(@PathVariable int id) {
+  public ResponseEntity<Void> delete(@PathVariable final int id) {
     this.userService.deleteById(id);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }

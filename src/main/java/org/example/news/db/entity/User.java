@@ -21,7 +21,7 @@ public class User implements Identifiable {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
-  @Column(name = "user_name")
+  @Column(name = "user_name", unique = true)
   private String name;
   @Column(name = "user_password")
   private String password;

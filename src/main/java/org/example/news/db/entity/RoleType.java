@@ -1,5 +1,5 @@
 package org.example.news.db.entity;
 
 public enum RoleType {
-  USER, ADMIN, MODERATOR
+  ROLE_USER, ROLE_ADMIN, ROLE_MODERATOR
 }
