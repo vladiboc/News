@@ -42,6 +42,7 @@ public class UserController {
       + "список пользователей с идентификаторами, именами, количеством созданных новостей и "
       + "комментариев.<br>Список выдается постранично. Размер страницы и текущий номер должен быть "
       + "обязательно задан в параметрах запроса.")
+//      security = {@SecurityRequirement(name = "bearer-key")})
   @ApiResponse(responseCode = "200", content = {@Content(
       schema = @Schema(implementation = UserListResponse.class),
       mediaType = "application/json")})
@@ -86,10 +87,9 @@ public class UserController {
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
-  @Operation(
-      summary = "Обновить пользователя с заданным идентификатором.", description = "Возвращает "
-      + "идентификатор обновленного пользователя, имя пользователя, списки созданных новостей и "
-      + "комментариев.")
+  @Operation( summary = "Обновить пользователя с заданным идентификатором.", description =
+      "Возвращает идентификатор обновленного пользователя, имя пользователя, списки созданных "
+      + "новостей и комментариев.")
   @ApiResponse(responseCode = "200", content = {@Content(
       schema = @Schema(implementation = UserResponse.class), mediaType = "application/json")})
   @ApiResponse(responseCode = "400", content = {@Content(
