@@ -9,6 +9,7 @@ import org.example.news.db.entity.User;
 import org.example.news.db.repository.UserRepository;
 import org.example.news.service.UserService;
 import org.example.news.service.core.AbstractUniversalService;
+import org.example.news.util.BeanUtils;
 import org.example.news.web.dto.user.UserFilter;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -42,13 +43,18 @@ public class UserServiceImpl
   @Override
   public User createNewUser(final User newUser) {
     newUser.setPassword(this.passwordEncoder.encode(newUser.getPassword()));
+    newUser.getRoles().stream().forEach(role -> role.setUser(newUser));
     return super.save(newUser);
   }
 
   @Override
   public User update(final int id, final User editedUser) {
+    final var existedUser = super.findById(id);
     editedUser.setPassword(this.passwordEncoder.encode(editedUser.getPassword()));
-    return super.update(id, editedUser);
+    BeanUtils.copyNonNullFields(existedUser, existedUser);
+    existedUser.setId(id);
+    existedUser.getRoles().stream().forEach(role -> role.setUser(existedUser));
+    return super.save(existedUser);
   }
 
   @Override
