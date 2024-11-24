@@ -6,13 +6,21 @@
 package org.example.news.aop.matchable;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.AccessDeniedException;
+import java.util.Base64;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.http.parser.Authorization;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.example.news.exception.UserUnmatchedException;
 import org.example.news.service.CommentService;
 import org.example.news.service.NewsService;
 import org.example.news.constant.ErrorMsg;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -28,6 +36,23 @@ public class MatchingUserAspect {
   public static final String HTTP_HEADER_USER_ID = "X-User-Id";
   private final NewsService newsService;
   private final CommentService commentService;
+  private final UserDetailsService userDetailsService;
+
+  @Before("@annotation(MatchableUser)")
+  public void matchingUser(
+  ) throws AccessDeniedException {
+    HttpServletRequest request = this.getRequest();
+    var header = request.getHeader("Authorization");
+    var encodedLoginPassword = header.substring("Basic ".length());
+    var loginPassword = new String(Base64.getDecoder().decode(encodedLoginPassword), StandardCharsets.UTF_8);
+    var ind = loginPassword.indexOf(":");
+    var login = loginPassword.substring(0, ind);
+    var userDetails = userDetailsService.loadUserByUsername(login);
+    userDetails.getAuthorities();
+//    if (headerUserId != newsUserId) {
+//      throw new AccessDeniedException(ErrorMsg.USER_ID_NOT_MATCHED);
+//    }
+  }
 
   @Before("@annotation(MatchableNewsUser)")
   public void matchingNewsUser() throws UserUnmatchedException {

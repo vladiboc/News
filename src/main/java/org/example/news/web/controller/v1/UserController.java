@@ -5,11 +5,13 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.news.aop.loggable.Loggable;
+import org.example.news.aop.matchable.MatchableUser;
 import org.example.news.db.entity.User;
 import org.example.news.mapper.v1.UserMapper;
 import org.example.news.service.UserService;
@@ -20,6 +22,7 @@ import org.example.news.web.dto.user.UserResponse;
 import org.example.news.web.dto.user.UserUpsertRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,13 +44,14 @@ public class UserController {
   @Operation(summary = "Получить постраничный список пользователей.", description = "Возвращает "
       + "список пользователей с идентификаторами, именами, количеством созданных новостей и "
       + "комментариев.<br>Список выдается постранично. Размер страницы и текущий номер должен быть "
-      + "обязательно задан в параметрах запроса.")
-//      security = {@SecurityRequirement(name = "bearer-key")})
+      + "обязательно задан в параметрах запроса.",
+      security = @SecurityRequirement(name = "basicAuth"))
   @ApiResponse(responseCode = "200", content = {@Content(
       schema = @Schema(implementation = UserListResponse.class),
       mediaType = "application/json")})
   @Parameter(name = "pageSize", required = true, description = "Размер страницы получаемых данных")
   @Parameter(name = "pageNumber", required = true, description = "Номер страницы получаемых данных")
+  @PreAuthorize("hasRole('ADMIN')")
   @GetMapping
   public ResponseEntity<UserListResponse> findAllByFilter(
       @Parameter(hidden = true) @Valid final UserFilter filter
@@ -59,13 +63,15 @@ public class UserController {
 
   @Operation(summary = "Получить пользователя по идентификатору.", description = "Возвращает "
       + "идентификатор пользователя, имя пользователя, список созданных новостей, список созданных "
-      + "комментариев.")
+      + "комментариев.",
+      security = @SecurityRequirement(name = "basicAuth"))
   @ApiResponse(responseCode = "200", content = {@Content(
           schema = @Schema(implementation = UserResponse.class),
           mediaType = "application/json")})
   @ApiResponse(responseCode = "404", content = {@Content(
           schema = @Schema(implementation = ErrorMsgResponse.class),
           mediaType = "application/json")})
+  @MatchableUser
   @GetMapping("/{id}")
   public ResponseEntity<UserResponse> findById(@PathVariable final int id) {
     final User foundUser = this.userService.findById(id);
@@ -89,7 +95,8 @@ public class UserController {
 
   @Operation( summary = "Обновить пользователя с заданным идентификатором.", description =
       "Возвращает идентификатор обновленного пользователя, имя пользователя, списки созданных "
-      + "новостей и комментариев.")
+      + "новостей и комментариев.",
+      security = @SecurityRequirement(name = "basicAuth"))
   @ApiResponse(responseCode = "200", content = {@Content(
       schema = @Schema(implementation = UserResponse.class), mediaType = "application/json")})
   @ApiResponse(responseCode = "400", content = {@Content(
@@ -105,7 +112,8 @@ public class UserController {
   }
 
   @Operation(summary = "Удалить пользователя по идентификатору.", description = "Удаляет "
-      + "пользователя по идентификатору.")
+      + "пользователя по идентификатору.",
+      security = @SecurityRequirement(name = "basicAuth"))
   @ApiResponse(responseCode = "204")
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(@PathVariable final int id) {

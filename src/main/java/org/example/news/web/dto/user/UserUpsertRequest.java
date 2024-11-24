@@ -1,6 +1,7 @@
 package org.example.news.web.dto.user;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.util.Set;
 import lombok.AllArgsConstructor;
@@ -31,6 +32,10 @@ public class UserUpsertRequest {
   )
   private String password;
 
-  @NotBlank(message = ErrorMsg.USER_ROLES_MUST_BE_SET)
+  @NotNull(message = ErrorMsg.USER_ROLES_MUST_BE_SET)
   private Set<RoleType> roles;
+
+  public UserUpsertRequest(String name) {
+    this.name = name;
+  }
 }

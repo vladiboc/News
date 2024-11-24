@@ -15,6 +15,7 @@ public class ErrorMsg {
   public static final String USER_PASSWORD_MUST_BE_SET = "Пароль пользователя должен быть установлен!";
   public static final String USER_NAME_SIZE_FROM_MIN_TO_MAX = "Имя пользователя должно быть от {min} до {max} символов!";
   public static final String USER_PASSWORD_SIZE_FROM_MIN_TO_MAX = "Пароль пользователя должен быть от {min} до {max} символов!";
+  public static final String USER_ID_NOT_MATCHED = "Идентификатор пользователя не соответствует ожидаемому!";
   public static final String COMMENT_BY_ID_NOT_FOUND = "Комментарий с id {0} не найден!";
   public static final String COMMENT_CONTENT_MUST_BE_FILLED = "Комментарий должен быть не пустым!";
   public static final String COMMENT_SIZE_FROM_MIN_TO_MAX = "Длина комментария должна быть от {min} до {max} символов!";
@@ -32,7 +33,7 @@ public class ErrorMsg {
   public static final String NEWS_TITLE_MUST_BE_FILLED = "Заголовок новости должен быть не пустым!";
   public static final String NEWS_CONTENT_MUST_BE_FILLED = "Содержание новости должен быть заполнено!";
   public static final String NEWS_CONTENT_SIZE_FROM_MIN_TO_MAX = "Содержание новости должен быть от {min} до {max} символов!";
-  public static final String NEWS_USER_ILLEGAL = "Талько ползьватель-создатель новости может изменять и удалять новость!";
+  public static final String NEWS_USER_ILLEGAL = "Талько пользователь-создатель новости может изменять и удалять новость!";
   public static final String PAGE_SIZE_MUST_BE_FILLED = "Размер страницы пагинации должен быть задан и неотрицателен!";
   public static final String PAGE_NUMBER_MUST_BE_FILLED = "Номер страницы пагинации должен быть задан и неотрицателен!";
   public static final String HEADER_USER_ID_NOT_POSITIVE = "Идентификатор пользователя в заголовке должент быть больше ноля!";

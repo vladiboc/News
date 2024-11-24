@@ -8,6 +8,7 @@ import org.example.news.web.dto.error.ErrorMsgResponse;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -59,6 +60,22 @@ public class ExceptionHandlerController {
     log.error("ExceptionHandlerController.badRequest:", e);
 
     return ResponseEntity.status(HttpStatus.FORBIDDEN)
+        .body(new ErrorMsgResponse(e.getMessage()));
+  }
+
+  @ExceptionHandler(AuthorizationDeniedException.class)
+  public ResponseEntity<ErrorMsgResponse> unauthorized(AuthorizationDeniedException e) {
+    log.error("ExceptionHandlerController.unauthorized:", e);
+
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+        .body(new ErrorMsgResponse(e.getMessage()));
+  }
+
+  @ExceptionHandler(Throwable.class)
+  public ResponseEntity<ErrorMsgResponse> internalServerError(Throwable e) {
+    log.error("ExceptionHandlerController.internalServerError:", e);
+
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body(new ErrorMsgResponse(e.getMessage()));
   }
 }
