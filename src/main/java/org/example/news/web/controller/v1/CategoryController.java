@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -20,6 +21,7 @@ import org.example.news.web.dto.category.CategoryUpsertRequest;
 import org.example.news.web.dto.error.ErrorMsgResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,7 +42,8 @@ public class CategoryController {
 
   @Operation(summary = "Получить постраничный список категорий.", description = "Возвращает список "
       + "категорий с идентификаторами, названием, списком новостей. Список выдается постранично. "
-      + "Размер страницы и текущий номер должен быть обязательно задан в параметрах запроса.")
+      + "Размер страницы и текущий номер должен быть обязательно задан в параметрах запроса.",
+      security = @SecurityRequirement(name = "basicAuth"))
   @Parameter(name = "pageSize", required = true, description = "Размер страницы получаемых данных")
   @Parameter(name = "pageNumber", required = true, description = "Номер страницы получаемых данных")
   @ApiResponse(responseCode = "200", content = {@Content(
@@ -57,7 +60,8 @@ public class CategoryController {
   }
 
   @Operation(summary = "Получить категорию по идентификатору.", description = "Возвращает "
-      + "идентификатор категории, название, список новостей.")
+      + "идентификатор категории, название, список новостей.",
+      security = @SecurityRequirement(name = "basicAuth"))
   @ApiResponse(responseCode = "200", content = {@Content(
       schema = @Schema(implementation = CategoryResponse.class), mediaType = "application/json")})
   @ApiResponse(responseCode = "404", content = {@Content(
@@ -70,11 +74,13 @@ public class CategoryController {
   }
 
   @Operation(summary = "Создать категорию.", description = "Возвращает идентификатор созданной "
-      + "категории, название, идентификатор новости и идентификатор пользователя.")
+      + "категории, название, идентификатор новости и идентификатор пользователя.",
+      security = @SecurityRequirement(name = "basicAuth"))
   @ApiResponse(responseCode = "201", content = {@Content(
       schema = @Schema(implementation = CategoryResponse.class), mediaType = "application/json")})
   @ApiResponse(responseCode = "400", content = {@Content(
       schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
+  @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
   @PostMapping
   public ResponseEntity<CategoryResponse> create(
       @RequestBody @Valid CategoryUpsertRequest request
@@ -87,13 +93,15 @@ public class CategoryController {
   }
 
   @Operation(summary = "Обновить категорию.", description = "Возвращает идентификатор обновленной "
-      + "категории, название, идентификатор новости и идентификатор пользователя.")
+      + "категории, название, идентификатор новости и идентификатор пользователя.",
+      security = @SecurityRequirement(name = "basicAuth"))
   @ApiResponse(responseCode = "200", content = {@Content(
       schema = @Schema(implementation = CategoryResponse.class),
       mediaType = "application/json")})
   @ApiResponse(responseCode = "400", content = {@Content(
       schema = @Schema(implementation = ErrorMsgResponse.class),
       mediaType = "application/json")})
+  @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
   @PutMapping("/{id}")
   public ResponseEntity<CategoryResponse> update(
       @PathVariable int id, @RequestBody @Valid CategoryUpsertRequest request
@@ -106,9 +114,11 @@ public class CategoryController {
   }
 
   @Operation(summary = "Удалить категорию по идентификатору.",
-      description = "Удаляет категорию по идентификатору.")
+      description = "Удаляет категорию по идентификатору.",
+      security = @SecurityRequirement(name = "basicAuth"))
   @ApiResponse(
       responseCode = "204")
+  @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(@PathVariable int id) {
     this.categoryService.deleteById(id);

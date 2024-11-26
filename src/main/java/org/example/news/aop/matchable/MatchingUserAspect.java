@@ -27,6 +27,8 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.HandlerMapping;
+import static org.example.news.db.entity.RoleType.ROLE_ADMIN;
+import static org.example.news.db.entity.RoleType.ROLE_MODERATOR;
 import static org.example.news.db.entity.RoleType.ROLE_USER;
 
 @Aspect
@@ -42,10 +44,18 @@ public class MatchingUserAspect {
   @Before("@annotation(MatchableUser)")
   public void matchingUser() throws AuthorizationDeniedException {
     final var requester = this.getRequestAuthor();
+    var isMatched = true;
     for (Role role : requester.getRoles()) {
-      if (ROLE_USER.equals(role.getAuthority()) && requester.getId() != this.getPathId()) {
-          throw new AuthorizationDeniedException(ErrorMsg.USER_ID_NOT_MATCHED, () -> false);
+      if (ROLE_ADMIN.equals(role.getAuthority()) || ROLE_MODERATOR.equals(role.getAuthority())) {
+        isMatched = true;
+        break;
       }
+      if (ROLE_USER.equals(role.getAuthority()) && requester.getId() != this.getPathId()) {
+        isMatched = false;
+      }
+    }
+    if (!isMatched) {
+      throw new AuthorizationDeniedException(ErrorMsg.USER_ID_NOT_MATCHED, () -> false);
     }
   }
 
