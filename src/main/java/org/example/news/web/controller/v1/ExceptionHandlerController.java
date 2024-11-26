@@ -1,9 +1,10 @@
 package org.example.news.web.controller.v1;
 
 import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.example.news.exception.UserUnmatchedException;
 import org.example.news.constant.ErrorMsg;
+import org.example.news.exception.UserUnmatchedException;
 import org.example.news.web.dto.error.ErrorMsgResponse;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -14,8 +15,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
-
-import java.util.List;
 
 @RestControllerAdvice
 @Slf4j

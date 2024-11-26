@@ -85,6 +85,7 @@ public class UserController {
       schema = @Schema(implementation = UserResponse.class), mediaType = "application/json")})
   @ApiResponse(responseCode = "400", content = {@Content(
       schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
+  @MatchableUser
   @PostMapping
   public ResponseEntity<UserResponse> create(@RequestBody @Valid final UserUpsertRequest request) {
     final User newUser = this.userMapper.requestToUser(request);
@@ -101,6 +102,7 @@ public class UserController {
       schema = @Schema(implementation = UserResponse.class), mediaType = "application/json")})
   @ApiResponse(responseCode = "400", content = {@Content(
       schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
+  @MatchableUser
   @PutMapping("/{id}")
   public ResponseEntity<UserResponse> update(
       @PathVariable int id, @RequestBody @Valid final UserUpsertRequest request
@@ -115,6 +117,7 @@ public class UserController {
       + "пользователя по идентификатору.",
       security = @SecurityRequirement(name = "basicAuth"))
   @ApiResponse(responseCode = "204")
+  @MatchableUser
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(@PathVariable final int id) {
     this.userService.deleteById(id);

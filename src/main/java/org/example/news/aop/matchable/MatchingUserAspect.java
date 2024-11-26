@@ -9,56 +9,51 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.AccessDeniedException;
 import java.util.Base64;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.http.parser.Authorization;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.example.news.constant.ErrorMsg;
+import org.example.news.db.entity.Role;
+import org.example.news.db.entity.User;
 import org.example.news.exception.UserUnmatchedException;
 import org.example.news.service.CommentService;
 import org.example.news.service.NewsService;
-import org.example.news.constant.ErrorMsg;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.example.news.service.UserService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.HandlerMapping;
-
-import java.util.Map;
+import static org.example.news.db.entity.RoleType.ROLE_USER;
 
 @Aspect
 @Component
 @RequiredArgsConstructor
 public class MatchingUserAspect {
   public static final String HTTP_HEADER_USER_ID = "X-User-Id";
+  private static final String BASIC_PREFIX = "Basic ";
   private final NewsService newsService;
   private final CommentService commentService;
-  private final UserDetailsService userDetailsService;
+  private final UserService userService;
 
   @Before("@annotation(MatchableUser)")
-  public void matchingUser(
-  ) throws AccessDeniedException {
-    HttpServletRequest request = this.getRequest();
-    var header = request.getHeader("Authorization");
-    var encodedLoginPassword = header.substring("Basic ".length());
-    var loginPassword = new String(Base64.getDecoder().decode(encodedLoginPassword), StandardCharsets.UTF_8);
-    var ind = loginPassword.indexOf(":");
-    var login = loginPassword.substring(0, ind);
-    var userDetails = userDetailsService.loadUserByUsername(login);
-    userDetails.getAuthorities();
-//    if (headerUserId != newsUserId) {
-//      throw new AccessDeniedException(ErrorMsg.USER_ID_NOT_MATCHED);
-//    }
+  public void matchingUser() throws AuthorizationDeniedException {
+    final var requester = this.getRequestAuthor();
+    for (Role role : requester.getRoles()) {
+      if (ROLE_USER.equals(role.getAuthority()) && requester.getId() != this.getPathId()) {
+          throw new AuthorizationDeniedException(ErrorMsg.USER_ID_NOT_MATCHED, () -> false);
+      }
+    }
   }
 
   @Before("@annotation(MatchableNewsUser)")
   public void matchingNewsUser() throws UserUnmatchedException {
     HttpServletRequest request = this.getRequest();
     int headerUserId = this.getHeaderId(request);
-    int newsId = this.getPathId(request);
+    int newsId = this.getPathId();
     int newsUserId = this.newsService.findById(newsId).getUser().getId();
     if (headerUserId != newsUserId) {
       throw new UserUnmatchedException(ErrorMsg.NEWS_USER_ILLEGAL);
@@ -69,7 +64,7 @@ public class MatchingUserAspect {
   public void matchingCommentUser() throws UserUnmatchedException {
     HttpServletRequest request = this.getRequest();
     int headerUserId = this.getHeaderId(request);
-    int commentId = this.getPathId(request);
+    int commentId = this.getPathId();
     int commentUserId = this.commentService.findById(commentId).getUser().getId();
     if (headerUserId != commentUserId) {
       throw new UserUnmatchedException(ErrorMsg.COMMENT_USER_ILLEGAL);
@@ -81,9 +76,22 @@ public class MatchingUserAspect {
     return  ((ServletRequestAttributes) requestAttributes).getRequest();
   }
 
-  private int getPathId(HttpServletRequest request) {
-    var pathVariables = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-    return Integer.valueOf(pathVariables.get("id"));
+  private User getRequestAuthor() {
+    final var encodedLoginPassword = this.getRequest()
+        .getHeader(HttpHeaders.AUTHORIZATION)
+        .substring(BASIC_PREFIX.length());
+    final var loginPassword = new String(
+        Base64.getDecoder().decode(encodedLoginPassword), StandardCharsets.UTF_8);
+    final var login = loginPassword.substring(0, loginPassword.indexOf(":"));
+
+    return this.userService.findByName(login);
+  }
+
+  private int getPathId() {
+    final var request = this.getRequest();
+    final var pathVariables =
+        (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+    return Integer.parseInt(pathVariables.get("id"));
   }
 
   /**
@@ -95,7 +103,7 @@ public class MatchingUserAspect {
   private int getHeaderId(HttpServletRequest request) throws UserUnmatchedException {
     String headerValue = request.getHeader(MatchingUserAspect.HTTP_HEADER_USER_ID);
     try {
-      int id = Integer.valueOf(headerValue);
+      int id = Integer.parseInt(headerValue);
       if (id <= 0) {
         throw new UserUnmatchedException(ErrorMsg.HEADER_USER_ID_NOT_POSITIVE);
       }

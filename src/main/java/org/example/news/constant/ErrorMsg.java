@@ -34,7 +34,7 @@ public class ErrorMsg {
   public static final String NEWS_CONTENT_MUST_BE_FILLED = "Содержание новости должен быть заполнено!";
   public static final String NEWS_CONTENT_SIZE_FROM_MIN_TO_MAX = "Содержание новости должен быть от {min} до {max} символов!";
   public static final String NEWS_USER_ILLEGAL = "Талько пользователь-создатель новости может изменять и удалять новость!";
-  public static final String PAGE_SIZE_MUST_BE_FILLED = "Размер страницы пагинации должен быть задан и неотрицателен!";
+  public static final String PAGE_SIZE_MUST_BE_FILLED = "Размер страницы пагинации должен быть задан и положителен!";
   public static final String PAGE_NUMBER_MUST_BE_FILLED = "Номер страницы пагинации должен быть задан и неотрицателен!";
   public static final String HEADER_USER_ID_NOT_POSITIVE = "Идентификатор пользователя в заголовке должент быть больше ноля!";
   public static final String HEADER_USER_ILLEGAL = "Идентификатор пользователя в заголовке не задан или задан неверно!";
