@@ -25,4 +25,8 @@ public class AppUserPrincipal implements UserDetails {
   public String getUsername() {
     return this.user.getName();
   }
+
+  public int getUserId() {
+    return this.user.getId();
+  }
 }

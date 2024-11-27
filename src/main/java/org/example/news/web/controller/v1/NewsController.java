@@ -2,15 +2,15 @@ package org.example.news.web.controller.v1;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.news.aop.loggable.Loggable;
-import org.example.news.aop.matchable.MatchableNewsUser;
 import org.example.news.db.entity.News;
 import org.example.news.mapper.v1.NewsMapper;
 import org.example.news.service.NewsService;
@@ -21,26 +21,32 @@ import org.example.news.web.dto.news.NewsResponse;
 import org.example.news.web.dto.news.NewsUpsertRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/news")
 @RequiredArgsConstructor
 @Tag(name = "News", description = "Управление новостями")
+@Loggable
 public class NewsController {
   private final NewsService newsService;
   private final NewsMapper newsMapper;
 
-  @Operation(
-      summary = "Получить постраничный список новостей по заданному фильтру",
-      description = "Возвращает список новостей с идентификаторами, заголовками, содержанием," +
-          "идентификаторами пользователей и категорий, списками комментариев.<br>" +
-          "Список выдается постранично. Размер страницы и текущий номер должен быть обязательно" +
-          "задан в параметрах запроса.<br>" +
-          "Список отфильтрован по значениям, заданным в параметрах запроса." +
-          "Все параметры необязательны, кроме размера и номера страницы.")
+  @Operation(summary = "Получить постраничный список новостей по заданному фильтру.",
+      description = "Возвращает список новостей с идентификаторами, заголовками, содержанием, "
+          + "идентификаторами пользователей и категорий, списками комментариев. Список выдается "
+          + "постранично. Размер страницы и текущий номер должен быть обязательно задан в "
+          + " параметрах запроса. Список отфильтрован по значениям, заданным в параметрах запроса. "
+          + "Все параметры необязательны, кроме размера и номера страницы.",
+      security = @SecurityRequirement(name = "basicAuth"))
   @Parameter(name = "pageSize", required = true, description = "Размер страницы получаемых данных")
   @Parameter(name = "pageNumber", required = true, description = "Номер страницы получаемых данных")
   @Parameter(name = "userId", description = "Идентификатор пользователя")
@@ -51,20 +57,19 @@ public class NewsController {
       responseCode = "200",
       content = {@Content(schema = @Schema(
           implementation = NewsListResponse.class), mediaType = "application/json")})
-  @Loggable
   @GetMapping
   public ResponseEntity<NewsListResponse> findAllByFilter(
       @Parameter(hidden = true) @Valid NewsFilter filter
   ) {
-    final List<News> news = this.newsService.findAllByFilter(filter);
-    final NewsListResponse response = this.newsMapper.newsListToNewsListResponse(news);
+    final var news = this.newsService.findAllByFilter(filter);
+    final var response = this.newsMapper.newsListToNewsListResponse(news);
     return ResponseEntity.ok(response);
   }
 
-  @Operation(
-      summary = "Получить новость по идентификатору",
-      description = "Возвращает идентификатор новости, заголовок, содержание," +
-          "идентификаторы пользователя и категории, списки комментариев")
+  @Operation(summary = "Получить новость по идентификатору.",
+      description = "Возвращает идентификатор  новости, заголовок, содержание, идентификаторы "
+          + "пользователя и категории, списки комментариев.",
+      security = @SecurityRequirement(name = "basicAuth"))
   @ApiResponse(
       responseCode = "200", content = {@Content(
           schema = @Schema(implementation = NewsResponse.class),
@@ -73,18 +78,17 @@ public class NewsController {
       responseCode = "404", content = {@Content(
           schema = @Schema(implementation = ErrorMsgResponse.class),
           mediaType = "application/json")})
-  @Loggable
   @GetMapping("/{id}")
   public ResponseEntity<NewsResponse> findById(@PathVariable int id) {
-    final News news = this.newsService.findById(id);
-    final NewsResponse response = this.newsMapper.newsToNewsResponse(news);
+    final var news = this.newsService.findById(id);
+    final var response = this.newsMapper.newsToNewsResponse(news);
     return ResponseEntity.ok(response);
   }
 
-  @Operation(
-      summary = "Создать новость",
-      description = "Возвращает идентификатор созданной новости, заголовок, содержание," +
-          "идентификатор пользователя, идентификатор категории, списки комментариев")
+  @Operation(summary = "Создать новость.",
+      description = "Возвращает идентификатор созданной новости, заголовок, содержание, "
+          + "идентификатор пользователя, идентификатор категории, списки комментариев.",
+      security = @SecurityRequirement(name = "basicAuth"))
   @ApiResponse(
       responseCode = "201", content = {@Content(
           schema = @Schema(implementation = NewsResponse.class),
@@ -93,22 +97,18 @@ public class NewsController {
       responseCode = "400", content = {@Content(
           schema = @Schema(implementation = ErrorMsgResponse.class),
           mediaType = "application/json")})
-  @Loggable
   @PostMapping
     public ResponseEntity<NewsResponse> create(@RequestBody @Valid NewsUpsertRequest request) {
-    final News newNews = this.newsMapper.requestToNews(request);
-    final News createdNews = this.newsService.save(newNews);
-    final NewsResponse response = this.newsMapper.newsToNewsResponse(createdNews);
+    final var newNews = this.newsMapper.requestToNews(request);
+    final var createdNews = this.newsService.save(newNews);
+    final var response = this.newsMapper.newsToNewsResponse(createdNews);
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
-  @Operation(
-      summary = "Обновить новость. Разрешено только пользователю-создателю новости. " +
-          "Идентификатор пользователя-создателя принимается через http-заголовок.",
-      description = "Возвращает идентификатор обновленной новости, заголовок, содержание," +
-          "идентификатор пользователя, идентификатор категории, списки комментариев")
-  @Parameter(name = "X-User-Id", in = ParameterIn.HEADER, required = true,
-      description = "Идентификатор пользователя-создателя новости")
+  @Operation(summary = "Обновить новость. Разрешено только пользователю-создателю новости.",
+      description = "Возвращает идентификатор обновленной новости, заголовок, содержание, "
+          + "идентификатор пользователя, идентификатор категории, списки комментариев.",
+      security = @SecurityRequirement(name = "basicAuth"))
   @ApiResponse(
       responseCode = "200", content = {@Content(
           schema = @Schema(implementation = NewsResponse.class),
@@ -117,29 +117,25 @@ public class NewsController {
       responseCode = "400", content = {@Content(
           schema = @Schema(implementation = ErrorMsgResponse.class),
           mediaType = "application/json")})
-  @Loggable
-  @MatchableNewsUser
   @PutMapping("/{id}")
+  @PreAuthorize("#id == #userDetails.getUserId()")
   public ResponseEntity<NewsResponse> update(
       @PathVariable int id, @RequestBody @Valid NewsUpsertRequest request
   ) {
-    final News editedNews = this.newsMapper.requestToNews(request);
-    final News updatedNews = this.newsService.update(id, editedNews);
-    final NewsResponse response = this.newsMapper.newsToNewsResponse(updatedNews);
+    final var editedNews = this.newsMapper.requestToNews(request);
+    final var updatedNews = this.newsService.update(id, editedNews);
+    final var response = this.newsMapper.newsToNewsResponse(updatedNews);
     return ResponseEntity.ok(response);
   }
 
-  @Operation(
-      summary = "Удалить новость по идентификатору. Разрешено только пользователю-создателю" +
-          "новости. Идентификатор пользователя-создателя принимается через http-заголовок.",
-      description = "Удаляет новость по идентификатору")
-  @Parameter(name = "X-User-Id", in = ParameterIn.HEADER, required = true,
-      description = "Идентификатор пользователя-создателя новости")
+  @Operation(summary = "Удалить новость по идентификатору. Разрешено пользователю-создателю "
+      + "новости. А также если есть роль ADMIN или MODERATOR.",
+      description = "Удаляет новость по идентификатору.",
+      security = @SecurityRequirement(name = "basicAuth"))
   @ApiResponse(
       responseCode = "204")
-  @Loggable
-  @MatchableNewsUser
   @DeleteMapping("/{id}")
+  @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR') || #id == #userDetails.getUserId()")
   public ResponseEntity<Void> delete(@PathVariable int id) {
     this.newsService.deleteById(id);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

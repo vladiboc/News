@@ -51,7 +51,7 @@ public class UserServiceImpl
   public User update(final int id, final User editedUser) {
     final var existedUser = super.findById(id);
     editedUser.setPassword(this.passwordEncoder.encode(editedUser.getPassword()));
-    BeanUtils.copyNonNullFields(existedUser, existedUser);
+    BeanUtils.copyNonNullFields(editedUser, existedUser);
     existedUser.setId(id);
     existedUser.getRoles().stream().forEach(role -> role.setUser(existedUser));
     return super.save(existedUser);

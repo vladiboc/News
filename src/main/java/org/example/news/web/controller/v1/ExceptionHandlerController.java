@@ -4,7 +4,6 @@ import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.example.news.constant.ErrorMsg;
-import org.example.news.exception.UserUnmatchedException;
 import org.example.news.web.dto.error.ErrorMsgResponse;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -51,15 +50,6 @@ public class ExceptionHandlerController {
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body(new ErrorMsgResponse(errorMessage));
-  }
-
-  @ExceptionHandler(UserUnmatchedException.class)
-  public ResponseEntity<ErrorMsgResponse> illegalUser(UserUnmatchedException e) {
-
-    log.error("ExceptionHandlerController.badRequest:", e);
-
-    return ResponseEntity.status(HttpStatus.FORBIDDEN)
-        .body(new ErrorMsgResponse(e.getMessage()));
   }
 
   @ExceptionHandler(AuthorizationDeniedException.class)

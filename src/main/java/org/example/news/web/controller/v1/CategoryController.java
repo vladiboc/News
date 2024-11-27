@@ -53,9 +53,8 @@ public class CategoryController {
   public ResponseEntity<CategoryListResponse> findAllByFilter(
       @Parameter(hidden = true) @Valid CategoryFilter filter
   ) {
-    final List<Category> categories = this.categoryService.findAllByFilter(filter);
-    final CategoryListResponse response =
-        this.categoryMapper.categoryListToCategoryListResponse(categories);
+    final var categories = this.categoryService.findAllByFilter(filter);
+    final var response = this.categoryMapper.categoryListToCategoryListResponse(categories);
     return ResponseEntity.ok(response);
   }
 
@@ -68,32 +67,33 @@ public class CategoryController {
       schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
   @GetMapping("/{id}")
   public ResponseEntity<CategoryResponse> findById(@PathVariable int id) {
-    final Category category = this.categoryService.findById(id);
-    final CategoryResponse response = this.categoryMapper.categoryToCategoryResponse(category);
+    final var category = this.categoryService.findById(id);
+    final var response = this.categoryMapper.categoryToCategoryResponse(category);
     return ResponseEntity.ok(response);
   }
 
-  @Operation(summary = "Создать категорию.", description = "Возвращает идентификатор созданной "
-      + "категории, название, идентификатор новости и идентификатор пользователя.",
+  @Operation(summary = "Создать категорию. Разрешено если есть роль ADMIN или MODERATOR.",
+      description = "Возвращает идентификатор созданной категории, название, идентификатор "
+      + "новости и идентификатор пользователя.",
       security = @SecurityRequirement(name = "basicAuth"))
   @ApiResponse(responseCode = "201", content = {@Content(
       schema = @Schema(implementation = CategoryResponse.class), mediaType = "application/json")})
   @ApiResponse(responseCode = "400", content = {@Content(
       schema = @Schema(implementation = ErrorMsgResponse.class), mediaType = "application/json")})
-  @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
   @PostMapping
+  @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
   public ResponseEntity<CategoryResponse> create(
       @RequestBody @Valid CategoryUpsertRequest request
   ) {
-    final Category newCategory = this.categoryMapper.requestToCategory(request);
-    final Category createdCategory = this.categoryService.save(newCategory);
-    final CategoryResponse response =
-        this.categoryMapper.categoryToCategoryResponse(createdCategory);
+    final var newCategory = this.categoryMapper.requestToCategory(request);
+    final var createdCategory = this.categoryService.save(newCategory);
+    final var response = this.categoryMapper.categoryToCategoryResponse(createdCategory);
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
-  @Operation(summary = "Обновить категорию.", description = "Возвращает идентификатор обновленной "
-      + "категории, название, идентификатор новости и идентификатор пользователя.",
+  @Operation(summary = "Обновить категорию. Разрешено только если есть роль ADMIN или MODERATOR.",
+      description = "Возвращает идентификатор обновленной категории, название, идентификатор "
+      + "новости и идентификатор пользователя.",
       security = @SecurityRequirement(name = "basicAuth"))
   @ApiResponse(responseCode = "200", content = {@Content(
       schema = @Schema(implementation = CategoryResponse.class),
@@ -101,25 +101,24 @@ public class CategoryController {
   @ApiResponse(responseCode = "400", content = {@Content(
       schema = @Schema(implementation = ErrorMsgResponse.class),
       mediaType = "application/json")})
-  @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
   @PutMapping("/{id}")
+  @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
   public ResponseEntity<CategoryResponse> update(
       @PathVariable int id, @RequestBody @Valid CategoryUpsertRequest request
   ) {
-    final Category editedCategory = this.categoryMapper.requestToCategory(request);
-    final Category updatedCategory = this.categoryService.update(id, editedCategory);
-    final CategoryResponse response =
-        this.categoryMapper.categoryToCategoryResponse(updatedCategory);
+    final var editedCategory = this.categoryMapper.requestToCategory(request);
+    final var updatedCategory = this.categoryService.update(id, editedCategory);
+    final var response = this.categoryMapper.categoryToCategoryResponse(updatedCategory);
     return ResponseEntity.ok(response);
   }
 
-  @Operation(summary = "Удалить категорию по идентификатору.",
-      description = "Удаляет категорию по идентификатору.",
+  @Operation(summary = "Удалить категорию по идентификатору. Разрешено только если есть роль ADMIN "
+      + "или MODERATOR.", description = "Удаляет категорию по идентификатору.",
       security = @SecurityRequirement(name = "basicAuth"))
   @ApiResponse(
       responseCode = "204")
-  @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
   @DeleteMapping("/{id}")
+  @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
   public ResponseEntity<Void> delete(@PathVariable int id) {
     this.categoryService.deleteById(id);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
