@@ -1,9 +1,10 @@
 package org.example.news.web.dto.user;
 
-import lombok.*;
-
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor

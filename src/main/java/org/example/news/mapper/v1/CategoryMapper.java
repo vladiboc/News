@@ -1,5 +1,6 @@
 package org.example.news.mapper.v1;
 
+import java.util.List;
 import org.example.news.aop.loggable.Loggable;
 import org.example.news.db.entity.Category;
 import org.example.news.web.dto.category.CategoryListResponse;
@@ -9,9 +10,10 @@ import org.example.news.web.dto.category.CategoryUpsertRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
-import java.util.List;
-
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = {NewsMapper.class})
+@Mapper(
+    componentModel = "spring",
+    unmappedTargetPolicy = ReportingPolicy.IGNORE,
+    uses = {NewsMapper.class})
 public interface CategoryMapper {
   Category requestToCategory(CategoryUpsertRequest request);
 

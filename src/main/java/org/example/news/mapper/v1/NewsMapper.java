@@ -1,5 +1,6 @@
 package org.example.news.mapper.v1;
 
+import java.util.List;
 import org.example.news.aop.loggable.Loggable;
 import org.example.news.db.entity.News;
 import org.example.news.web.dto.news.NewsListResponse;
@@ -11,10 +12,11 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
-import java.util.List;
-
 @DecoratedWith(NewsMapperDelegate.class)
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = {CategoryMapper.class, CommentMapper.class})
+@Mapper(
+    componentModel = "spring",
+    unmappedTargetPolicy = ReportingPolicy.IGNORE,
+    uses = {CategoryMapper.class, CommentMapper.class})
 public interface NewsMapper {
   News requestToNews(NewsUpsertRequest request);
 

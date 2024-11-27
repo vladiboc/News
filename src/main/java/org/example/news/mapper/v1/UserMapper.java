@@ -1,5 +1,6 @@
 package org.example.news.mapper.v1;
 
+import java.util.List;
 import java.util.stream.Collectors;
 import org.example.news.aop.loggable.Loggable;
 import org.example.news.db.entity.Role;
@@ -10,8 +11,6 @@ import org.example.news.web.dto.user.UserResponseForList;
 import org.example.news.web.dto.user.UserUpsertRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
-
-import java.util.List;
 
 @Loggable
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE,

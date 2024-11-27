@@ -13,16 +13,16 @@ import org.example.news.constant.StringSizes;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommentUpsertRequest {
-    @NotBlank(message = ErrorMsg.COMMENT_CONTENT_MUST_BE_FILLED)
-    @Size(
-        min = StringSizes.COMMENT_CONTENT_MIN,
-        max = StringSizes.COMMENT_CONTENT_MAX,
-        message = ErrorMsg.COMMENT_SIZE_FROM_MIN_TO_MAX
-    )
-    private String content;
-    @Positive(message = ErrorMsg.COMMENT_NEWS_ID_MUST_BE_POSITIVE)
-    private int newsId;
-    @Positive(message = ErrorMsg.COMMENT_USER_ID_MUST_BE_POSITIVE)
-    private int userId;
+  @NotBlank(message = ErrorMsg.COMMENT_CONTENT_MUST_BE_FILLED)
+  @Size(
+      min = StringSizes.COMMENT_CONTENT_MIN,
+      max = StringSizes.COMMENT_CONTENT_MAX,
+      message = ErrorMsg.COMMENT_SIZE_FROM_MIN_TO_MAX
+  )
+  private String content;
+  @Positive(message = ErrorMsg.COMMENT_NEWS_ID_MUST_BE_POSITIVE)
+  private int newsId;
+  @Positive(message = ErrorMsg.COMMENT_USER_ID_MUST_BE_POSITIVE)
+  private int userId;
 }
 

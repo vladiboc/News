@@ -1,12 +1,10 @@
 package org.example.news.web.dto.news;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.example.news.web.dto.category.CategoryResponseForList;
-import org.example.news.web.dto.comment.CommentResponse;
-
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.example.news.web.dto.comment.CommentResponse;
 
 @Data
 @NoArgsConstructor

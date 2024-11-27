@@ -1,10 +1,10 @@
-/**
- * Здесь собраны все константы - размеры строк для валидации
- */
 package org.example.news.constant;
 
 import lombok.experimental.UtilityClass;
 
+/**
+ * Здесь собраны все константы - размеры строк для валидации.
+ */
 @UtilityClass
 public class StringSizes {
   public static final int USER_NAME_MIN = 2;

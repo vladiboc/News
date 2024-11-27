@@ -1,5 +1,6 @@
 package org.example.news.mapper.v1;
 
+import java.util.List;
 import org.example.news.aop.loggable.Loggable;
 import org.example.news.db.entity.Comment;
 import org.example.news.web.dto.comment.CommentListResponse;
@@ -9,8 +10,6 @@ import org.mapstruct.DecoratedWith;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
-
-import java.util.List;
 
 @DecoratedWith(CommentMapperDelegate.class)
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)

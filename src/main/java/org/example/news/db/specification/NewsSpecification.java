@@ -1,6 +1,3 @@
-/**
- * Спецификация для поиска новостей по заданному фильтру
- */
 package org.example.news.db.specification;
 
 import jakarta.annotation.Nullable;
@@ -10,6 +7,9 @@ import org.example.news.db.entity.User;
 import org.example.news.web.dto.news.NewsFilter;
 import org.springframework.data.jpa.domain.Specification;
 
+/**
+ * Спецификация для поиска новостей по заданному фильтру.
+ */
 public interface NewsSpecification {
 
   static Specification<News> withFilter(NewsFilter filter) {
@@ -45,7 +45,8 @@ public interface NewsSpecification {
       if (categoryId == null) {
         return null;
       }
-      return criteriaBuilder.equal(root.get(News.Fields.category).get(Category.Fields.id), categoryId);
+      return criteriaBuilder.equal(
+          root.get(News.Fields.category).get(Category.Fields.id), categoryId);
     };
   }
 
@@ -55,7 +56,8 @@ public interface NewsSpecification {
       if (categoryName == null) {
         return null;
       }
-      return criteriaBuilder.equal(root.get(News.Fields.category).get(Category.Fields.name), categoryName);
+      return criteriaBuilder.equal(
+          root.get(News.Fields.category).get(Category.Fields.name), categoryName);
     };
   }
 }

@@ -1,16 +1,13 @@
 package org.example.news.web.dto.user;
 
-import jakarta.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.aspectj.lang.annotation.Around;
 import org.example.news.db.entity.RoleType;
 import org.example.news.web.dto.comment.CommentResponse;
 import org.example.news.web.dto.news.NewsResponseForList;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @NoArgsConstructor

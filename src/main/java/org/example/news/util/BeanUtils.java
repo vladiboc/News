@@ -1,10 +1,9 @@
 package org.example.news.util;
 
+import java.lang.reflect.Field;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import org.example.news.aop.loggable.Loggable;
-
-import java.lang.reflect.Field;
 
 @UtilityClass
 public class BeanUtils {
@@ -14,7 +13,7 @@ public class BeanUtils {
     Class<?> clazz = source.getClass();
     Field[] fields = clazz.getDeclaredFields();
 
-    for(Field field : fields) {
+    for (Field field : fields) {
       field.setAccessible(true);
       Object value = field.get(source);
 
