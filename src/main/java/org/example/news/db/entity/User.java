@@ -46,17 +46,17 @@ public class User implements Identifiable {
   @UpdateTimestamp
   private Instant updatedAt;
 
-  public User(String name) {
+  public User(final String name) {
     this.name = name;
   }
 
-  public User(String name, String password, List<Role> roles) {
+  public User(final String name, final String password, final List<Role> roles) {
     this(name);
     this.password = password;
     this.roles = roles;
   }
 
-  public User(int id, String name) {
+  public User(final int id, final String name) {
     this(name);
     this.id = id;
   }

@@ -18,7 +18,7 @@
 - PostgreSQL 12.3
 - Docker Compose 2.20.2
 - Docker 24.0.7
-- Git 2.42.2
+- [Git 2.42.2](LICENSE)
 
 ## Инструкция по локальному запуску приложения
 

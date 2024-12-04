@@ -3,14 +3,12 @@ package org.example.news.web.controller.v1;
 import jakarta.persistence.EntityNotFoundException;
 import net.bytebuddy.utility.RandomString;
 import net.javacrumbs.jsonunit.JsonAssert;
-import org.example.news.aop.matchable.MatchingUserAspect;
 import org.example.news.db.entity.Category;
 import org.example.news.db.entity.News;
 import org.example.news.db.entity.User;
 import org.example.news.mapper.v1.NewsMapper;
 import org.example.news.service.NewsService;
 import org.example.news.util.TestStringUtil;
-import org.example.news.web.controller.core.AbstractControllerTest;
 import org.example.news.web.dto.news.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -21,6 +19,9 @@ import org.springframework.http.MediaType;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.security.test.context.support.TestExecutionEvent;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -33,6 +34,7 @@ class NewsControllerTest extends AbstractControllerTest {
   private NewsMapper newsMapper;
 
   @Test
+  @WithMockUser(username = "user", roles = {"USER"})
   void whenFindAllByFilter_thenReturnAllNewsByFilter() throws Exception {
     final List<News> news = new ArrayList<>();
     final User user1 = new User(1, "Пользователь №1");
@@ -64,6 +66,7 @@ class NewsControllerTest extends AbstractControllerTest {
   }
 
   @Test
+  @WithMockUser(username = "admin", roles = {"ADMIN"})
   void whenFindById_thenReturnNewsById() throws Exception {
     final User user = new User(1, "Пользователь №1");
     final Category category = new Category(1, "Категория №1");
@@ -83,6 +86,7 @@ class NewsControllerTest extends AbstractControllerTest {
   }
 
   @Test
+  @WithMockUser(username = "moderator", roles = {"MODERATOR"})
   void whenCreate_thenReturnNewNews() throws Exception {
     final NewsUpsertRequest request = new NewsUpsertRequest("Заголовок №1", "Новость №1", 1, 1);
     final User user = new User(1, "Пользователь №1");
@@ -106,9 +110,11 @@ class NewsControllerTest extends AbstractControllerTest {
   }
 
   @Test
+  @WithUserDetails(userDetailsServiceBeanName = "userDetailsServiceImpl",
+      value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
   void whenUpdate_thenReturnUpdatedNews() throws Exception {
-    final NewsUpsertRequest request = new NewsUpsertRequest("Заголовок №1", "Новость №1 обновлённая", 1, 1);
-    final User user = new User(1, "Пользователь №1");
+    final var user = this.userService.findByName("testUser");
+    final NewsUpsertRequest request = new NewsUpsertRequest("Заголовок №1", "Новость №1 обновлённая", user.getId(), 1);
     final Category category = new Category(1, "Категория №1");
     final News editedNews = new News("Заголовок №1", "Новость №1 обновлённая", user, category);
     final News updatedNews = new News(1, "Заголовок №1", "Новость №1 обновлённая", user, category);
@@ -121,7 +127,6 @@ class NewsControllerTest extends AbstractControllerTest {
 
     final String expectedResponse = TestStringUtil.readStringFromResource("response/news/update_news_response.json");
     final String actualResponse = this.mockMvc.perform(put("/api/v1/news/1")
-        .header(MatchingUserAspect.HTTP_HEADER_USER_ID, 1)
         .contentType(MediaType.APPLICATION_JSON)
         .content(this.objectMapper.writeValueAsString(request)))
         .andExpect(status().isOk())
@@ -138,21 +143,21 @@ class NewsControllerTest extends AbstractControllerTest {
   }
 
   @Test
+  @WithMockUser(username = "admin", roles = {"ADMIN"})
   void whenDeleteById_thenReturnNoContent() throws Exception {
     final User user = new User(1, "Пользователь №1");
     final News news = new News("Заголовок №1", "Новость №1", user);
 
     Mockito.when(this.newsService.findById(1)).thenReturn(news);
 
-    this.mockMvc.perform(delete("/api/v1/news/1")
-        .header(MatchingUserAspect.HTTP_HEADER_USER_ID, 1))
+    this.mockMvc.perform(delete("/api/v1/news/1"))
         .andExpect(status().isNoContent());
 
-    Mockito.verify(this.newsService, Mockito.times(1)).findById(1);
     Mockito.verify(this.newsService, Mockito.times(1)).deleteById(1);
   }
 
   @Test
+  @WithMockUser(username = "user", roles = {"USER"})
   void whenFindByIdNotExistedNews_thenReturnError() throws Exception {
     Mockito.when(this.newsService.findById(888)).thenThrow(new EntityNotFoundException("Новость с id 888 не найдена!"));
 
@@ -165,6 +170,7 @@ class NewsControllerTest extends AbstractControllerTest {
   }
 
   @Test
+  @WithMockUser(username = "admin", roles = {"ADMIN"})
   void whenCreateNewsWithEmptyField_thenReturnError() throws Exception {
     final NewsUpsertRequest request = new NewsUpsertRequest("Заголовок №1","Новость №1",1, 1);
 
@@ -182,6 +188,7 @@ class NewsControllerTest extends AbstractControllerTest {
   }
 
   @Test
+  @WithMockUser(username = "admin", roles = {"ADMIN"})
   void whenCreateWithInvalidIds_thenReturnError() throws Exception {
     final NewsUpsertRequest request = new NewsUpsertRequest("Заголовок №1","Новость №1",0, 1);
     String expectedResponse = TestStringUtil.readStringFromResource("response/news/_err_invalid_user_id_response.json");
@@ -205,6 +212,7 @@ class NewsControllerTest extends AbstractControllerTest {
   }
 
   @Test
+  @WithMockUser(username = "moderator", roles = {"MODERATOR"})
   void whenCreateNewsWithIllegalSizeOfTitleOrContent_thenReturnError() throws Exception {
     final NewsUpsertRequest request = new NewsUpsertRequest("Заголовок №1","Новость №1",1, 1);
     String expectedResponse = TestStringUtil.readStringFromResource("response/news/_err_news_title_illegal_size_response.json");

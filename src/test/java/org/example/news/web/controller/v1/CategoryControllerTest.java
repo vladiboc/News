@@ -7,7 +7,6 @@ import org.example.news.db.entity.Category;
 import org.example.news.mapper.v1.CategoryMapper;
 import org.example.news.service.CategoryService;
 import org.example.news.util.TestStringUtil;
-import org.example.news.web.controller.core.AbstractControllerTest;
 import org.example.news.web.dto.category.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -16,6 +15,7 @@ import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.security.test.context.support.WithMockUser;
 
 class CategoryControllerTest extends AbstractControllerTest {
   @MockBean
@@ -24,6 +24,7 @@ class CategoryControllerTest extends AbstractControllerTest {
   private CategoryMapper categoryMapper;
 
   @Test
+  @WithMockUser(username = "user", roles = {"USER"})
   void whenFindAllByFilter_thenReturnAllCategoriesByFilter() throws Exception {
     final List<Category> categories = new ArrayList<>();
     categories.add(new Category("Категория №1"));
@@ -49,6 +50,7 @@ class CategoryControllerTest extends AbstractControllerTest {
   }
 
   @Test
+  @WithMockUser(username = "user", roles = {"USER"})
   void whenFindById_thenReturnCategoryById() throws Exception {
     final Category category = new Category(1, "Категория №1");
     final CategoryResponse categoryResponse = new CategoryResponse(1, "Категория №1");
@@ -66,6 +68,7 @@ class CategoryControllerTest extends AbstractControllerTest {
   }
 
   @Test
+  @WithMockUser(username = "admin", roles = {"ADMIN"})
   void whenCreate_thenReturnNewCategory() throws Exception {
     final CategoryUpsertRequest request = new CategoryUpsertRequest("Категория №1");
     final Category newCategory = new Category(1, "Категория №1");
@@ -87,6 +90,7 @@ class CategoryControllerTest extends AbstractControllerTest {
   }
 
   @Test
+  @WithMockUser(username = "moderator", roles = {"MODERATOR"})
   void whenUpdate_thenReturnUpdatedCategory() throws Exception {
     final CategoryUpsertRequest request = new CategoryUpsertRequest("Категория №1 обновлённая");
     final Category editedCategory = new Category("Категория №1 обновлённая");
@@ -108,6 +112,7 @@ class CategoryControllerTest extends AbstractControllerTest {
   }
 
   @Test
+  @WithMockUser(username = "admin", roles = {"ADMIN"})
   void whenDeleteById_thenReturnNoContent() throws Exception {
     this.mockDelete("/api/v1/category/1", HttpStatus.NO_CONTENT);
 
@@ -115,6 +120,7 @@ class CategoryControllerTest extends AbstractControllerTest {
   }
 
   @Test
+  @WithMockUser(username = "user", roles = {"USER"})
   void whenFindByIdNotExistedCategory_thenReturnError() throws Exception {
     Mockito.when(this.categoryService.findById(777)).thenThrow(new EntityNotFoundException("Категория с id 777 не найдена!"));
 
@@ -127,6 +133,7 @@ class CategoryControllerTest extends AbstractControllerTest {
   }
 
   @Test
+  @WithMockUser(username = "admin", roles = {"ADMIN"})
   void whenCreateCategoryWithEmptyName_thenReturnError() throws Exception {
     final CategoryUpsertRequest request = new CategoryUpsertRequest();
     final String expectedResponse = TestStringUtil.readStringFromResource("response/category/_err_empty_category_name_response.json");
@@ -135,6 +142,7 @@ class CategoryControllerTest extends AbstractControllerTest {
   }
 
   @Test
+  @WithMockUser(username = "moder", roles = {"MODERATOR"})
   void whenCreateCategoryWithInvalidContentSize_thenReturnError() throws Exception {
     final String expectedResponse = TestStringUtil.readStringFromResource("response/category/_err_category_content_illegal_size_response.json");
 

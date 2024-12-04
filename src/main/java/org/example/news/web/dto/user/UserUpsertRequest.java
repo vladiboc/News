@@ -34,8 +34,4 @@ public class UserUpsertRequest {
 
   @NotNull(message = ErrorMsg.USER_ROLES_MUST_BE_SET)
   private Set<RoleType> roles;
-
-  public UserUpsertRequest(String name) {
-    this.name = name;
-  }
 }

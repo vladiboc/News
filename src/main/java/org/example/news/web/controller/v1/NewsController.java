@@ -9,19 +9,29 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.example.news.aop.loggable.Loggable;
 import org.example.news.db.entity.News;
+import org.example.news.db.entity.RoleType;
 import org.example.news.mapper.v1.NewsMapper;
+import org.example.news.security.AppUserPrincipal;
 import org.example.news.service.NewsService;
+import org.example.news.service.UserService;
+import org.example.news.service.impl.NewsServiceImpl;
 import org.example.news.web.dto.error.ErrorMsgResponse;
 import org.example.news.web.dto.news.NewsFilter;
 import org.example.news.web.dto.news.NewsListResponse;
 import org.example.news.web.dto.news.NewsResponse;
 import org.example.news.web.dto.news.NewsUpsertRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -118,10 +128,16 @@ public class NewsController {
           schema = @Schema(implementation = ErrorMsgResponse.class),
           mediaType = "application/json")})
   @PutMapping("/{id}")
-  @PreAuthorize("#id == #userDetails.getUserId()")
   public ResponseEntity<NewsResponse> update(
-      @PathVariable int id, @RequestBody @Valid NewsUpsertRequest request
+      @AuthenticationPrincipal UserDetails userDetails,
+      @PathVariable int id,
+      @RequestBody @Valid NewsUpsertRequest request
   ) {
+    final var creatorId = this.newsService.findById(id).getUser().getId();
+    final var requesterId = ((AppUserPrincipal) userDetails).getUserId();
+    if (requesterId != creatorId) {
+      throw new AuthorizationDeniedException("Unmatched user", () -> false);
+    }
     final var editedNews = this.newsMapper.requestToNews(request);
     final var updatedNews = this.newsService.update(id, editedNews);
     final var response = this.newsMapper.newsToNewsResponse(updatedNews);
@@ -135,8 +151,18 @@ public class NewsController {
   @ApiResponse(
       responseCode = "204")
   @DeleteMapping("/{id}")
-  @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR') || #id == #userDetails.getUserId()")
-  public ResponseEntity<Void> delete(@PathVariable int id) {
+  public ResponseEntity<Void> delete(
+      @AuthenticationPrincipal UserDetails userDetails, @PathVariable int id
+  ) {
+    final var roles =
+        userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
+    if (!roles.contains(RoleType.ROLE_ADMIN.name())
+        && !roles.contains(RoleType.ROLE_MODERATOR.name())) {
+      if (this.newsService.findById(id).getUser().getId()
+          != ((AppUserPrincipal) userDetails).getUserId()) {
+        throw new AuthorizationDeniedException("Unmatched user", () -> false);
+      }
+    }
     this.newsService.deleteById(id);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }

@@ -2,15 +2,15 @@
   "users": [
     {
       "id": 1,
-      "name": "Пользователь №1",
-      "newsCount": 1,
+      "name": "testUser",
+      "newsCount": 0,
       "commentsCount": 0
     },
     {
       "id": 2,
-      "name": "Пользователь №2",
+      "name": "testAdmin",
       "newsCount": 0,
-      "commentsCount": 1
+      "commentsCount": 0
     }
   ]
 }

@@ -13,7 +13,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
   private final UserService userService;
 
   @Override
-  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    return new AppUserPrincipal(userService.findByName(username));
+  public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
+    return new AppUserPrincipal(this.userService.findByName(username));
   }
 }

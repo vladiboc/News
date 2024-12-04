@@ -1,6 +1,7 @@
 {
   "id": 1,
-  "name": "Пользователь №1",
+  "name": "testUser",
   "news": [],
-  "comments": []
+  "comments": [],
+  "roles": ["ROLE_USER"]
 }

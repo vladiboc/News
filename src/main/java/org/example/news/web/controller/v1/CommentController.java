@@ -12,16 +12,23 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.news.aop.loggable.Loggable;
 import org.example.news.db.entity.Comment;
+import org.example.news.db.entity.RoleType;
 import org.example.news.mapper.v1.CommentMapper;
+import org.example.news.security.AppUserPrincipal;
 import org.example.news.service.CommentService;
 import org.example.news.web.dto.comment.CommentFilter;
 import org.example.news.web.dto.comment.CommentListResponse;
 import org.example.news.web.dto.comment.CommentResponse;
 import org.example.news.web.dto.comment.CommentUpsertRequest;
 import org.example.news.web.dto.error.ErrorMsgResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -102,10 +109,20 @@ public class CommentController {
       schema = @Schema(implementation = ErrorMsgResponse.class),
       mediaType = "application/json")})
   @PutMapping("/{id}")
-  @PreAuthorize("#id == #userDetails.getUserId()")
   public ResponseEntity<CommentResponse> update(
-      @PathVariable int id, @RequestBody @Valid CommentUpsertRequest request
+      @AuthenticationPrincipal UserDetails userDetails,
+      @PathVariable int id,
+      @RequestBody @Valid CommentUpsertRequest request
   ) {
+    final var roles =
+        userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
+    if (!roles.contains(RoleType.ROLE_ADMIN.name())
+        && !roles.contains(RoleType.ROLE_MODERATOR.name())) {
+      if (this.commentService.findById(id).getUser().getId()
+          != ((AppUserPrincipal) userDetails).getUserId()) {
+        throw new AuthorizationDeniedException("Unmatched user", () -> false);
+      }
+    }
     final var editedComment = this.commentMapper.requestToComment(request);
     final var updatedComment = this.commentService.update(id, editedComment);
     final var response = this.commentMapper.commentToCommentResponse(updatedComment);
@@ -119,7 +136,18 @@ public class CommentController {
   @ApiResponse(responseCode = "204")
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR') || #id == #userDetails.getUserId()")
-  public ResponseEntity<Void> delete(@PathVariable int id) {
+  public ResponseEntity<Void> delete(
+      @AuthenticationPrincipal UserDetails userDetails, @PathVariable int id
+  ) {
+    final var roles =
+        userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
+    if (!roles.contains(RoleType.ROLE_ADMIN.name())
+        && !roles.contains(RoleType.ROLE_MODERATOR.name())) {
+      if (this.commentService.findById(id).getUser().getId()
+          != ((AppUserPrincipal) userDetails).getUserId()) {
+        throw new AuthorizationDeniedException("Unmatched user", () -> false);
+      }
+    }
     this.commentService.deleteById(id);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }

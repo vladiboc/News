@@ -1,5 +1,6 @@
 package org.example.news.web.dto.user;
 
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

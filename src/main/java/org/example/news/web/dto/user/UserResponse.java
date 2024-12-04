@@ -18,9 +18,4 @@ public class UserResponse {
   private List<RoleType> roles = new ArrayList<>();
   private List<NewsResponseForList> news = new ArrayList<>();
   private List<CommentResponse> comments = new ArrayList<>();
-
-  public UserResponse(int id, String name) {
-    this.id = id;
-    this.name = name;
-  }
 }

@@ -1,9 +1,11 @@
 package org.example.news.web.controller.v1;
 
 import jakarta.persistence.EntityNotFoundException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import net.bytebuddy.utility.RandomString;
 import net.javacrumbs.jsonunit.JsonAssert;
-import org.example.news.aop.matchable.MatchingUserAspect;
 import org.example.news.db.entity.Category;
 import org.example.news.db.entity.Comment;
 import org.example.news.db.entity.News;
@@ -11,7 +13,6 @@ import org.example.news.db.entity.User;
 import org.example.news.mapper.v1.CommentMapper;
 import org.example.news.service.CommentService;
 import org.example.news.util.TestStringUtil;
-import org.example.news.web.controller.core.AbstractControllerTest;
 import org.example.news.web.dto.comment.CommentFilter;
 import org.example.news.web.dto.comment.CommentListResponse;
 import org.example.news.web.dto.comment.CommentResponse;
@@ -21,22 +22,21 @@ import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-
+import org.springframework.security.test.context.support.TestExecutionEvent;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class CommentControllerTest extends AbstractControllerTest {
   @MockBean
-  CommentService commentService;
+  private CommentService commentService;
   @MockBean
-  CommentMapper commentMapper;
+  private CommentMapper commentMapper;
 
   @Test
+  @WithMockUser(username = "user", roles = {"USER"})
   void whenFindAllByFilter_thenReturnAllCommentsByFilter() throws Exception {
     final User user1 = new User(1, "Пользователь №1");
     final Category category1 = new Category(1, "Категория №1");
@@ -67,6 +67,7 @@ class CommentControllerTest extends AbstractControllerTest {
   }
 
   @Test
+  @WithMockUser(username = "admin", roles = {"ADMIN"})
   void whenFindById_thenReturnCommentById() throws Exception {
     final User user = new User(1, "Пользователь №1");
     final Category category = new Category(1, "Категория №1");
@@ -87,6 +88,7 @@ class CommentControllerTest extends AbstractControllerTest {
   }
 
   @Test
+  @WithMockUser(username = "moder", roles = {"MODERATOR"})
   void whenCreate_thenReturnNewComment() throws Exception {
     final CommentUpsertRequest request = new CommentUpsertRequest("Комментарий №1 Пользователя №1", 1, 1);
     final User user = new User(1, "Пользователь №1");
@@ -111,9 +113,11 @@ class CommentControllerTest extends AbstractControllerTest {
   }
 
   @Test
+  @WithUserDetails(userDetailsServiceBeanName = "userDetailsServiceImpl",
+      value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
   void whenUpdate_thenReturnUpdatedComment() throws Exception {
-    final CommentUpsertRequest request = new CommentUpsertRequest("Исправленный Комментарий №1 Пользователя №1", 1, 1);
-    final User user = new User(1, "Пользователь №1");
+    final User user = this.userService.findByName("testUser");
+    final CommentUpsertRequest request = new CommentUpsertRequest("Исправленный Комментарий №1 Пользователя №1", 1, user.getId());
     final Category category = new Category(1, "Категория №1");
     final News news = new News(1, "Заголовок №1", "Новость №1", user, category);
     final Comment editedComment = new Comment("Исправленный Комментарий №1 Пользователя №1", news, user);
@@ -127,7 +131,6 @@ class CommentControllerTest extends AbstractControllerTest {
 
     final String expectedResponse = TestStringUtil.readStringFromResource("response/comment/update_comment_response.json");
     final String actualResponse = this.mockMvc.perform(put("/api/v1/comment/1")
-            .header(MatchingUserAspect.HTTP_HEADER_USER_ID, 1)
             .contentType(MediaType.APPLICATION_JSON)
             .content(this.objectMapper.writeValueAsString(request)))
         .andExpect(status().isOk())
@@ -144,21 +147,19 @@ class CommentControllerTest extends AbstractControllerTest {
   }
 
   @Test
+  @WithMockUser(username = "admin", roles = {"ADMIN"})
   void whenDeleteById_thenReturnNoContent() throws Exception {
     final User user = new User(1, "Пользователь №1");
     final Comment comment = new Comment("Комментарий №1", user);
 
-    Mockito.when(this.commentService.findById(1)).thenReturn(comment);
-
-    this.mockMvc.perform(delete("/api/v1/comment/1")
-            .header(MatchingUserAspect.HTTP_HEADER_USER_ID, 1))
+    this.mockMvc.perform(delete("/api/v1/comment/1"))
         .andExpect(status().isNoContent());
 
-    Mockito.verify(this.commentService, Mockito.times(1)).findById(1);
     Mockito.verify(this.commentService, Mockito.times(1)).deleteById(1);
   }
 
   @Test
+  @WithMockUser(username = "user", roles = {"USER"})
   void whenFindByIdNotExistedComment_thenReturnError() throws Exception {
     Mockito.when(this.commentService.findById(999)).thenThrow(new EntityNotFoundException("Комментарий с id 999 не найден!"));
 
@@ -171,6 +172,7 @@ class CommentControllerTest extends AbstractControllerTest {
   }
 
   @Test
+  @WithMockUser(username = "admin", roles = {"ADMIN"})
   void whenCreateCommentWithEmptyContent_thenReturnError() throws Exception {
     final String expectedResponse = TestStringUtil.readStringFromResource("response/comment/_err_empty_content_response.json");
 
@@ -184,6 +186,7 @@ class CommentControllerTest extends AbstractControllerTest {
   }
 
   @Test
+  @WithMockUser(username = "moderator", roles = {"MODERATOR"})
   void whenCreateCommentWithInvalidNewsId_thenReturnError() throws Exception {
     final String expectedResponse = TestStringUtil.readStringFromResource("response/comment/_err_invalid_news_id_response.json");
 
@@ -197,6 +200,7 @@ class CommentControllerTest extends AbstractControllerTest {
   }
 
   @Test
+  @WithMockUser(username = "admin", roles = {"ADMIN"})
   void whenCreateCommentWithInvalidUserId_thenReturnError() throws Exception {
     final String expectedResponse = TestStringUtil.readStringFromResource("response/comment/_err_invalid_user_id_response.json");
 
@@ -210,6 +214,7 @@ class CommentControllerTest extends AbstractControllerTest {
   }
 
   @Test
+  @WithMockUser(username = "user", roles = {"USER"})
   void whenCreateCommentWithInvalidContentSize_thenReturnError() throws Exception {
     final String expectedResponse = TestStringUtil.readStringFromResource("response/comment/_err_comment_content_illegal_size_response.json");
 

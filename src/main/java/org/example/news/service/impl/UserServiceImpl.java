@@ -53,7 +53,6 @@ public class UserServiceImpl
     editedUser.setPassword(this.passwordEncoder.encode(editedUser.getPassword()));
     BeanUtils.copyNonNullFields(editedUser, existedUser);
     existedUser.setId(id);
-    existedUser.getRoles().stream().forEach(role -> role.setUser(existedUser));
     return super.save(existedUser);
   }
 

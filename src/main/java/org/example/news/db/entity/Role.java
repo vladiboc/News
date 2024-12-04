@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -18,7 +19,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 @Data
 @Entity
-@Table(name = "authorities")
+@Table(name = "authorities",
+    uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "authority"})})
 public class Role {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +34,7 @@ public class Role {
   @ToString.Exclude
   private User user;
 
-  public static Role from(RoleType roleType) {
+  public static Role from(final RoleType roleType) {
     var role = new Role();
     role.setAuthority(roleType);
     return role;
